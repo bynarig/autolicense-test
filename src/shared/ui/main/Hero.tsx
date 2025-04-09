@@ -1,12 +1,12 @@
 import Link from "next/link";
-
+import Image from "next/image"
 export default function Hero() {
   return (
     <div className="hero bg-base-200 min-h-screen">
   <div className="hero-content flex-col lg:flex-row-reverse">
-    <img
+    <Image
       src="https://s1.it.atcdn.net/wp-content/uploads/2015/05/Cliffs-of-Moher-Wild-Atlantic-Way-800x600.jpg"
-      className="max-w-sm rounded-lg shadow-2xl" />
+      className="max-w-sm rounded-lg shadow-2xl" alt=''/>
     <div>
       <h1 className="text-5xl font-bold">Ireland FAQ</h1>
       <p className="py-6">

@@ -1,5 +1,3 @@
-import Navbar from "@/shared/ui/Navbar";
-import Footer from "@/shared/ui/Footer";
 
 export default function Page() {
   return (<>
