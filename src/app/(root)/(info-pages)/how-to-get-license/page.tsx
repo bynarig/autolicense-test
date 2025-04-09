@@ -3,7 +3,6 @@ import Footer from "@/shared/ui/Footer";
 
 export default function Page() {
   return (<>
-        <Navbar/>
     <div className="max-w-3xl mx-auto p-4">
       <h1 className="text-3xl font-bold mb-6 text-center">
         🚗 Як здати на водійське посвідчення в Ірландії (категорія B – легкові автомобілі)
@@ -172,7 +171,6 @@ export default function Page() {
         </div>
       </div>
     </div>
-        <Footer/>
     </>
   );
 }
