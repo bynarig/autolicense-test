@@ -1,4 +1,3 @@
-// shared/store/user/userSlice.ts
 "use client";
 
 import { createSlice } from '@reduxjs/toolkit';
@@ -13,7 +12,6 @@ interface UserState {
   avatar: string | undefined;
 }
 
-// Helper function to safely access sessionStorage
 const getSessionStorageUser = () => {
   if (typeof window === 'undefined') return null;
 
@@ -26,7 +24,6 @@ const getSessionStorageUser = () => {
   }
 };
 
-// Create initial state based on sessionStorage
 const createInitialState = (): UserState => {
   const sessionUser = getSessionStorageUser();
 
@@ -66,7 +63,6 @@ const userSlice = createSlice({
       state.role = action.payload.role;
       state.avatar = action.payload.avatar;
 
-      // Save to sessionStorage on login
       if (typeof window !== 'undefined') {
         sessionStorage.setItem('user', JSON.stringify(state));
       }
@@ -80,7 +76,6 @@ const userSlice = createSlice({
       state.role = undefined;
       state.avatar = undefined;
 
-      // Clear from sessionStorage on logout
       if (typeof window !== 'undefined') {
         sessionStorage.removeItem('user');
       }
