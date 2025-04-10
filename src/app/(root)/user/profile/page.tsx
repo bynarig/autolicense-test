@@ -4,6 +4,7 @@ import Navbar from "@/shared/ui/Navbar";
 import Footer from "@/shared/ui/Footer";
 import {useSelector} from "react-redux";
 import {RootState} from "@/shared/store";
+import Link from "next/link";
 
 export default function Page() {
     const isLogged = useSelector((state: RootState) => state.userSlice.isLogged);
@@ -18,6 +19,7 @@ export default function Page() {
                                 <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" alt={""} width={24} height={24}/>
                             </div>
                             <h3 className="text-7xl">Hi, username</h3>
+                            <Link className="btn" href="/license/test">go to test system</Link>
                         </div>
 
                     </div>
