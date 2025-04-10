@@ -6,9 +6,6 @@ export default function Home() {
   return (
     <>
       <Navbar/>
-        <div>
-
-        </div>
       <Hero/>
       <Footer/>
     </>
