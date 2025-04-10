@@ -2,13 +2,14 @@
 
 import LanguageSwitch from "@/features/languageSwitch";
 import Link from "next/link";
-import {useAppDispatch, useAppSelector} from "@/shared/store/hooks";
 import {login, logout} from "@/shared/store/user/userSlice";
 import {UserMockData} from "@/shared/data/mock/userInfo";
+import {useDispatch, useSelector} from "react-redux";
+import {RootState} from "@/shared/store";
 
 export default function Navbar() {
-    const isLogged = useAppSelector(state => state.userSlice.isLogged)
-    const dispatch = useAppDispatch();
+    const isLogged = useSelector((state: RootState) => state.userSlice.isLogged);
+    const dispatch = useDispatch();
 
     function LogIn() {
         dispatch(login({
@@ -28,7 +29,7 @@ export default function Navbar() {
             <div className="flex gap-2">
                 <LanguageSwitch/>
                 {isLogged ?
-                    <div className="dropdown dropdown-end" >
+                    <div className="dropdown dropdown-end">
 
                         <div tabIndex={0} role="button" className="btn btn-ghost btn-circle">
                             <div className="w-10 h-10 rounded-full flex items-center justify-center     ">
