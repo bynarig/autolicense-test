@@ -10,13 +10,13 @@ export interface Storage {
 
 const createNoopStorage = () => {
   return {
-    getItem(_key: string) {
+    getItem() {
       return Promise.resolve(null);
     },
-    setItem(_key: string, value: any) {
+    setItem(_key: string, value: never) {
       return Promise.resolve(value);
     },
-    removeItem(_key: string) {
+    removeItem() {
       return Promise.resolve();
     },
   };
