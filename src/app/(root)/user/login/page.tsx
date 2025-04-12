@@ -10,10 +10,7 @@ export default function Page() {
             <Navbar/>
 
             <div className="flex justify-center h-140 mt-55">
-                <form className="card bg-base-100 w-96 shadow-sm" action={async () => {
-                    "use server"
-                    await signIn()
-                }}>
+                <form className="card bg-base-100 w-96 shadow-sm" >
                     <div className="flex justify-center">
                         <h1 className="text-6xl">Login</h1>
                     </div>

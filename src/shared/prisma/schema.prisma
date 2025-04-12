@@ -14,3 +14,95 @@ datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
 }
+
+// Include User model
+model User {
+  id                    Int       @id @map("_id")
+  email                 String    @unique
+  password              String
+  username              String    @unique
+  name                  String?
+  avatarUrl             String?
+  createdAt             DateTime  @default(now())
+  editedAt              DateTime?
+  deletedAt             DateTime?
+
+  emailVerified         DateTime?
+  lastLogin             DateTime?
+
+  resetToken            String?
+  resetTokenExpiry      DateTime?
+
+  twoFactorEnabled      Boolean   @default(false)
+  twoFactorSecret       String?
+
+  subscriptionLVL       Int       @default(0)
+  subscriptionType      String?
+  subscriptionExpiresAt DateTime?
+
+  role                  Role      @default(UNAPPROVED)
+
+  test                  Test[]
+}
+
+enum Role {
+  UNAPPROVED
+  USER
+  ADMIN
+}
+
+
+model Test {
+  id            Int        @id @map("_id")
+  createdAt     DateTime   @default(now())
+  editedAt      DateTime?
+  deletedAt     DateTime?
+
+  category      String[]   @default(["main"])
+  tags          String[]
+  title         String
+  slug          String?    @unique
+  description   String?
+  difficulty    String?
+  timeCompleted Int
+  content       String?
+  published     Boolean    @default(false)
+
+  views         Int        @default(0)
+  attempts      Int        @default(0)
+  maxScore      Int?
+
+  Question      Question[]
+
+  author        User       @relation(fields: [authorId], references: [id])
+  authorId      Int
+}
+
+model Question {
+  id          Int      @id @map("_id")
+  title       String
+  imageUrl    String?
+  explanation String?
+  category    String[] @default(["main"])
+  type        String?
+  order       Int?
+  points      Int      @default(1)
+
+  Test        Test?    @relation(fields: [testId], references: [id])
+  testId      Int?
+
+  answers     Answer[]
+}
+
+model Answer {
+  id          Int      @id @map("_id")
+  title       String
+  isTrue      Boolean
+  price       Int      @default(1)
+  order       Int?
+  feedback    String?
+
+  question    Question @relation(fields: [questionId], references: [id])
+  questionId  Int
+}
+

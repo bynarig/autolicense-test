@@ -113,15 +113,65 @@ Prisma.NullTypes = {
 exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
   email: 'email',
-  name: 'name'
+  password: 'password',
+  username: 'username',
+  name: 'name',
+  avatarUrl: 'avatarUrl',
+  createdAt: 'createdAt',
+  editedAt: 'editedAt',
+  deletedAt: 'deletedAt',
+  emailVerified: 'emailVerified',
+  lastLogin: 'lastLogin',
+  resetToken: 'resetToken',
+  resetTokenExpiry: 'resetTokenExpiry',
+  twoFactorEnabled: 'twoFactorEnabled',
+  twoFactorSecret: 'twoFactorSecret',
+  subscriptionLVL: 'subscriptionLVL',
+  subscriptionType: 'subscriptionType',
+  subscriptionExpiresAt: 'subscriptionExpiresAt',
+  role: 'role'
 };
 
-exports.Prisma.PostScalarFieldEnum = {
+exports.Prisma.TestScalarFieldEnum = {
   id: 'id',
+  createdAt: 'createdAt',
+  editedAt: 'editedAt',
+  deletedAt: 'deletedAt',
+  category: 'category',
+  tags: 'tags',
   title: 'title',
+  slug: 'slug',
+  description: 'description',
+  difficulty: 'difficulty',
+  timeCompleted: 'timeCompleted',
   content: 'content',
   published: 'published',
+  views: 'views',
+  attempts: 'attempts',
+  maxScore: 'maxScore',
   authorId: 'authorId'
+};
+
+exports.Prisma.QuestionScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  imageUrl: 'imageUrl',
+  explanation: 'explanation',
+  category: 'category',
+  type: 'type',
+  order: 'order',
+  points: 'points',
+  testId: 'testId'
+};
+
+exports.Prisma.AnswerScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  isTrue: 'isTrue',
+  price: 'price',
+  order: 'order',
+  feedback: 'feedback',
+  questionId: 'questionId'
 };
 
 exports.Prisma.SortOrder = {
@@ -133,11 +183,17 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
+exports.Role = exports.$Enums.Role = {
+  UNAPPROVED: 'UNAPPROVED',
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
-  Post: 'Post'
+  Test: 'Test',
+  Question: 'Question',
+  Answer: 'Answer'
 };
 
 /**
