@@ -6,9 +6,8 @@
 
 generator client {
   provider        = "prisma-client-js"
-  output = "../../../node_modules/.prisma/client"
+  output          = "../../../node_modules/.prisma/client"
   previewFeatures = ["prismaSchemaFolder"]
-
 }
 
 datasource db {
@@ -18,32 +17,32 @@ datasource db {
 
 // Include User model
 model User {
-  id                    Int       @id @map("_id")
-  email                 String    @unique
-  password              String
-  username              String    @unique
-  name                  String?
-  avatarUrl             String?
-  createdAt             DateTime  @default(now())
-  editedAt              DateTime?
-  deletedAt             DateTime?
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  email     String    @unique
+  password  String?
+  username  String?   @unique
+  name      String?
+  avatarUrl String?
+  createdAt DateTime  @default(now())
+  editedAt  DateTime?
+  deletedAt DateTime?
 
-  emailVerified         DateTime?
-  lastLogin             DateTime?
+  emailVerified DateTime?
+  lastLogin     DateTime?
 
-  resetToken            String?
-  resetTokenExpiry      DateTime?
+  resetToken       String?
+  resetTokenExpiry DateTime?
 
-  twoFactorEnabled      Boolean   @default(false)
-  twoFactorSecret       String?
+  twoFactorEnabled Boolean @default(false)
+  twoFactorSecret  String?
 
   subscriptionLVL       Int       @default(0)
   subscriptionType      String?
   subscriptionExpiresAt DateTime?
 
-  role                  Role      @default(UNAPPROVED)
+  role Role @default(UNAPPROVED)
 
-  test                  Test[]
+  test Test[]
 }
 
 enum Role {
@@ -52,9 +51,8 @@ enum Role {
   ADMIN
 }
 
-
 model Test {
-  id            Int        @id @map("_id")
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
   createdAt     DateTime   @default(now())
   editedAt      DateTime?
   deletedAt     DateTime?
@@ -75,12 +73,13 @@ model Test {
 
   Question      Question[]
 
+  authorId      String     @db.ObjectId
   author        User       @relation(fields: [authorId], references: [id])
-  authorId      Int
 }
 
+
 model Question {
-  id          Int      @id @map("_id")
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   imageUrl    String?
   explanation String?
@@ -89,21 +88,22 @@ model Question {
   order       Int?
   points      Int      @default(1)
 
+  testId      String?  @db.ObjectId
   Test        Test?    @relation(fields: [testId], references: [id])
-  testId      Int?
 
   answers     Answer[]
 }
 
+
 model Answer {
-  id          Int      @id @map("_id")
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   isTrue      Boolean
   price       Int      @default(1)
   order       Int?
   feedback    String?
 
+  questionId  String   @db.ObjectId
   question    Question @relation(fields: [questionId], references: [id])
-  questionId  Int
 }
 
