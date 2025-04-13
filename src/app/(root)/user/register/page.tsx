@@ -2,36 +2,38 @@ import {signIn} from "@/app/auth"
 import Navbar from "@/shared/ui/Navbar";
 import Footer from "@/shared/ui/Footer";
 import {prisma} from "@/shared/lib/db";
+import { Prisma } from "@prisma/client";
 
 export default function Page() {
     const signup = async ({
                               name,
                               email,
                               password,
-                          }:
-                          {
-                              name: string;
-                              email: string;
-                              password: string;
-                          }) => {
+                          }: {
+        name: string;
+        email: string;
+        password: string;
+    }) => {
         "use server"
-        if (!await prisma.user.findUnique({
-            where: {
-                email: email
-            }
-        })) {
-            const user = await prisma.user.create({
-            data: {
-                email: email,
-                name: name,
-                password: password
-            }
 
-        })
+        const existingUser = await prisma.user.findUnique({
+            where: {email},
+        });
+
+        if (!existingUser) {
+            const userData: Prisma.UserCreateInput = {
+                email,
+                name,
+                password,
+            };
+
+            await prisma.user.create({
+                data: userData,
+            });
         }
-        await signIn('credentials', {email: email, password: password})
 
-    }
+        await signIn('credentials', {email, password});
+    };
     return (
         <>
             <Navbar/>
