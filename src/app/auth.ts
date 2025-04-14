@@ -1,11 +1,10 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
-// import {PrismaAdapter} from "@auth/prisma-adapter"
-// import {prisma} from "@/shared/lib/db"
+import {prisma} from "@/shared/lib/db";
+import Bcrypt from "@/shared/lib/bcrypt";
 
 
 export const {handlers, auth, signIn, signOut} = NextAuth({
-    // adapter: PrismaAdapter(prisma),
     providers: [
         Credentials({
             credentials: {
@@ -14,11 +13,22 @@ export const {handlers, auth, signIn, signOut} = NextAuth({
             },
             authorize: async (credentials) => {
 
-                let user = {email: "test@test.com", password: "password", name: "test"};
+                const MockUser = {email: "test@test.com", password: "password", name: "test"};
 
-                if (credentials?.password == user.password && credentials?.password == user.password) {
-                    return user
-                } else return null
+                const user = await prisma.user.findUnique({
+                    where: {
+                        email: credentials?.email as string,
+                    },
+                });
+                if (user) {
+                    const IsPasswordIdentical = await Bcrypt.compare(credentials.password as string, user.password as string);
+                    if (IsPasswordIdentical) {
+                        return user
+                    }
+
+
+
+                } return MockUser as any;
             },
         }),
     ],
