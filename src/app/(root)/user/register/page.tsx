@@ -3,6 +3,7 @@ import Navbar from "@/shared/ui/Navbar";
 import Footer from "@/shared/ui/Footer";
 import {prisma} from "@/shared/lib/db";
 import { Prisma } from "@prisma/client";
+import Bcrypt from "@/shared/lib/bcrypt";
 
 export default function Page() {
     const signup = async ({
@@ -14,7 +15,9 @@ export default function Page() {
         email: string;
         password: string;
     }) => {
+
         "use server"
+        const hashedPassword = await Bcrypt.hash(password);
 
         const existingUser = await prisma.user.findUnique({
             where: {email},
@@ -24,7 +27,7 @@ export default function Page() {
             const userData: Prisma.UserCreateInput = {
                 email,
                 name,
-                password,
+                password: hashedPassword,
             };
 
             await prisma.user.create({
@@ -32,7 +35,7 @@ export default function Page() {
             });
         }
 
-        await signIn('credentials', {email, password});
+        await signIn('credentials', {email, password, });
     };
     return (
         <>
