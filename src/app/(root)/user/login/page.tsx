@@ -1,5 +1,5 @@
 import {signIn} from "@/app/auth"
-import Navbar from "@/shared/ui/Navbar";
+import Navbar from "@/shared/ui/basics/navbar/Navbar";
 import Footer from "@/shared/ui/Footer";
 
 export default function Page() {

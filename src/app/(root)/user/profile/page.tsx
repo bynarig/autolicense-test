@@ -1,4 +1,4 @@
-import Navbar from "@/shared/ui/Navbar";
+import Navbar from "@/shared/ui/basics/navbar/Navbar";
 import Footer from "@/shared/ui/Footer";
 import Link from "next/link";
 import {auth} from "@/app/auth";

@@ -7,14 +7,13 @@ const nextConfig: NextConfig = {
                 protocol: 'https',
                 hostname: 's1.it.atcdn.net',
                 pathname: '/**',
-            },            {
+            }, {
                 protocol: 'https',
                 hostname: 'img.daisyui.com',
                 pathname: '/**',
             },
         ],
     },
-
 
 };
 
