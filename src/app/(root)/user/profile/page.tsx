@@ -1,10 +1,11 @@
+"use client"
 import Navbar from "@/shared/ui/basics/navbar/Navbar";
 import Footer from "@/shared/ui/Footer";
 import Link from "next/link";
-import {auth} from "@/app/auth";
+import {useSession} from "next-auth/react";
 
-export default async function Page() {
-    const session = await auth();
+export default function Page() {
+    const { data: session, status } = useSession();
     return (
         <>
             <Navbar/>
