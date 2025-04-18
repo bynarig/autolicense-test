@@ -1,5 +1,5 @@
 "use server"
-import { signIn } from "@/app/auth"
+import { signIn } from "@/app/(root)/user/(auth)/auth"
 import { prisma } from "@/shared/lib/db"
 import { Prisma } from "@prisma/client"
 import Bcrypt from "@/shared/lib/bcrypt"

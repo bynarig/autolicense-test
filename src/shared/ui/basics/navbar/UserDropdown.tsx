@@ -1,7 +1,7 @@
 // app/components/UserDropdown.tsx
 "use client"
 import Link from "next/link";
-import {userSignOut } from "@/shared/actions/auth-actions";
+import {googleSignIn, userSignOut} from "@/app/(root)/user/(auth)/auth-actions";
 import { useSession } from "next-auth/react"
 
 export default function UserDropdown() {
@@ -44,7 +44,8 @@ export default function UserDropdown() {
         );
     } else {
         return (
-            <>sdffgfsdg
+            <>
+                <button className="btn btn-ghost" onClick={() => googleSignIn()}>Login</button>
             </>
         )
     }

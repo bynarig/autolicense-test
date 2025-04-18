@@ -1,17 +1,13 @@
 "use client"
 
 import Navbar from "@/shared/ui/basics/navbar/Navbar";
-import Footer from "@/shared/ui/Footer";
-import {useSelector} from "react-redux";
-import {RootState} from "@/shared/store";
+import Footer from "@/shared/ui/basics/Footer";
 
 export default function Page() {
-    const isLogged = useSelector((state: RootState) => state.userSlice.isLogged);
     return (
         <>
             <Navbar/>
-            {
-                isLogged ? <div className="flex justify-center h-140 mt-70">
+               <div className="flex justify-center h-140 mt-70">
                         <div className="card bg-base-100 w-96 shadow-sm">
                             <div className="flex justify-center">
                                 <h1 className="text-6xl">Reset</h1>
@@ -22,18 +18,6 @@ export default function Page() {
                             </div>
                         </div>
                     </div>
-
-                    : <div className="flex justify-center h-140 mt-70">
-                        <div className="card bg-base-100 w-96 shadow-sm">
-                            <div className="flex justify-center">
-                                <h1 className="text-6xl">LogIn first 😵</h1>
-
-                            </div>
-                        </div>
-                    </div>
-            }
-
-
             <Footer/>
         </>
     );

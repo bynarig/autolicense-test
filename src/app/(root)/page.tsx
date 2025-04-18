@@ -1,6 +1,6 @@
-import Hero from "@/shared/ui/main/Hero";
+import Hero from "@/widget/Hero";
 import Navbar from "@/shared/ui/basics/navbar/Navbar";
-import Footer from "@/shared/ui/Footer";
+import Footer from "@/shared/ui/basics/Footer";
 
 export default function Home() {
   return (

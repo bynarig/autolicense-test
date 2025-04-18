@@ -1,6 +1,6 @@
 import type {Metadata} from "next";
 import Navbar from "@/shared/ui/basics/navbar/Navbar";
-import Footer from "@/shared/ui/Footer";
+import Footer from "@/shared/ui/basics/Footer";
 
 export const metadata: Metadata = {
     title: "LII | Info",

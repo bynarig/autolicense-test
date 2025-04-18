@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn, signOut } from "@/app/auth";
+import { signIn, signOut } from "@/app/(root)/user/(auth)/auth";
 
 export async function googleSignIn(callbackUrl: string = "/") {
   await signIn("google", { redirectTo: callbackUrl });
