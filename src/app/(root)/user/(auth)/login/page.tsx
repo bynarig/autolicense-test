@@ -45,7 +45,7 @@ export default function Page() {
         } else {
             const errorData = await res.json()
             // Handle error display to user
-            console.error("Login failed:", errorData.error)
+            // console.error("Login failed:", errorData.error)
         }
     }
 

@@ -1,10 +1,10 @@
 "use server"
+
 import {signIn} from "@/app/(root)/user/(auth)/auth"
 import {prisma} from "@/shared/lib/db"
-import {Prisma} from "@prisma/client"
+import {Prisma} from ".prisma/client"
 import Bcrypt from "@/shared/lib/bcrypt"
 import {NextRequest, NextResponse} from "next/server";
-
 
 export async function POST(req: NextRequest) {
     try {
@@ -52,33 +52,3 @@ export async function POST(req: NextRequest) {
         );
     }
 }
-//
-// export async function signup({
-//                                  name,
-//                                  email,
-//                                  password,
-//                              }: {
-//     name: string
-//     email: string
-//     password: string
-// }) {
-//     const hashedPassword = await Bcrypt.hash(password)
-//
-//     const existingUser = await prisma.user.findUnique({
-//         where: {email},
-//     })
-//
-//     if (!existingUser) {
-//         const userData: Prisma.UserCreateInput = {
-//             email,
-//             name,
-//             password: hashedPassword,
-//         }
-//
-//         await prisma.user.create({
-//             data: userData,
-//         })
-//     }
-//
-//     await signIn("credentials", {email, password})
-// }

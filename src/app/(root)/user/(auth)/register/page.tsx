@@ -45,7 +45,7 @@ export default function Page() {
             await update()
         } else {
             const errorData = await res.json()
-            console.error("Login failed:", errorData.error)
+            // console.error("Login failed:", errorData.error)
         }
         // TODO: extend error handling
 
