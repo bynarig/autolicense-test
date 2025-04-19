@@ -5,6 +5,10 @@ import {Prisma} from "@prisma/client"
 import Bcrypt from "@/shared/lib/bcrypt"
 import {NextRequest, NextResponse} from "next/server";
 
+interface UserCreateInput {
+  email: string;
+  password: string;
+}
 
 export async function POST(req: NextRequest) {
     try {
@@ -17,7 +21,7 @@ export async function POST(req: NextRequest) {
         const hashedPassword = await Bcrypt.hash(password)
 
         if (!DbUser) {
-            const userData: Prisma.UserCreateInput = {
+            const userData: UserCreateInput = {
                 email,
                 password: hashedPassword,
             }
