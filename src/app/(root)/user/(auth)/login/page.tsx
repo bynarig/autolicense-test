@@ -18,9 +18,36 @@ import {
 import {Input} from "@/components/ui/input"
 import {zodResolver} from "@hookform/resolvers/zod";
 import {formSchema} from "@/shared/lib/zod";
+import {useSession} from "next-auth/react";
+import {useRouter} from "next/navigation";
+import {useEffect} from "react";
+import {clientSignIn} from "@/app/(root)/user/(auth)/auth-actions";
 
 
-export default async function Page() {
+export default function Page() {
+    const {status, update} = useSession()
+    const router = useRouter()
+
+    // Handle session-based redirect
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push("/")
+        }
+    }, [status, router])
+
+    async function onSubmit(data: {email: string; password: string}) {
+
+        const res = await clientSignIn(data);
+
+        if (res.ok) {
+            await update() // Force session update
+            // The useEffect will handle the redirect automatically
+        } else {
+            const errorData = await res.json()
+            // Handle error display to user
+            console.error("Login failed:", errorData.error)
+        }
+    }
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -28,19 +55,7 @@ export default async function Page() {
             email: "",
             password: "",
         },
-    })
-
-    async function onSubmit(data: { email: string, password: string }
-    ) {
-        const res = await fetch("/api/auth/login", {
-            method: "POST",
-            body: JSON.stringify(data)
-        });
-        // TODO: extend error handling
-
-
-
-    }
+    });
 
     return (
         <>
@@ -57,9 +72,6 @@ export default async function Page() {
                                     <FormControl>
                                         <Input placeholder="email" {...field} />
                                     </FormControl>
-                                    {/*<FormDescription>*/}
-                                    {/*    This is your email address that you registered with*/}
-                                    {/*</FormDescription>*/}
                                     <FormMessage/>
                                 </FormItem>
                             )}
@@ -73,9 +85,6 @@ export default async function Page() {
                                     <FormControl>
                                         <Input placeholder="password" type="password" {...field} />
                                     </FormControl>
-                                    {/*<FormDescription>*/}
-                                    {/*    This is your password that you registered with*/}
-                                    {/*</FormDescription>*/}
                                     <FormMessage/>
                                 </FormItem>
                             )}

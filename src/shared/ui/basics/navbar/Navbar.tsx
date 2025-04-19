@@ -27,7 +27,7 @@ import {
 import {components} from "@/shared/ui/basics/navbar/data";
 import {useSession} from "next-auth/react";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
-import {userSignOut} from "@/app/(root)/user/(auth)/auth-actions";
+import {clientSignOut} from "@/app/(root)/user/(auth)/auth-actions";
 import {Button} from "@/components/ui/button";
 // import {ModeToggle} from "@/shared/ui/ModeToggle";
 
@@ -109,7 +109,7 @@ export default function Navbar() {
                     <DropdownMenuSeparator/>
                     <Link href="/user/profile"><DropdownMenuItem>Profile</DropdownMenuItem></Link>
                     <Link href="/user/profile"><DropdownMenuItem>Billing</DropdownMenuItem></Link>
-                    <button onClick={() => userSignOut()}><DropdownMenuItem>SignOut</DropdownMenuItem></button>
+                    <button onClick={() => clientSignOut()}><DropdownMenuItem>SignOut</DropdownMenuItem></button>
                 </DropdownMenuContent>
             </DropdownMenu>
                     : <Link href="/user/login" className="md:mr-[15px] md:mt-[5px] md:mb-[5px]"><Button variant="default" size="icon">Login</Button></Link>

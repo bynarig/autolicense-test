@@ -1,53 +1,64 @@
-"use server";
+"use server"
 
-import { NextRequest, NextResponse } from "next/server";
+import {NextRequest, NextResponse} from "next/server"
+import {signIn} from "@/app/(root)/user/(auth)/auth"
+import {prisma} from "@/shared/lib/db";
 import Bcrypt from "@/shared/lib/bcrypt";
-import { prisma } from "@/shared/lib/db";
-import { signIn } from "@/app/(root)/user/(auth)/auth";
 
 export async function POST(req: NextRequest) {
-  try {
-    const { email, password } = await req.json();
-
-    // Find user by email
-    const DbUser = await prisma.user.findUnique({
-      where: { email },
-    });
-
-    if (!DbUser) {
-      return NextResponse.json(
-        { error: "User not found" },
-        { status: 404 }
-      );
-    }
-
-    // Compare passwords
-    const validPassword = await Bcrypt.compare(password, DbUser.password || "");
-    if (!validPassword) {
-      return NextResponse.json(
-        { error: "Wrong password" },
-        { status: 401 }
-      );
-    }
-
-    // Attempt to sign in
     try {
-      await signIn("credentials", { email, password }); // Optional, depending on your auth implementation
-    } catch (err) {
-      return NextResponse.json(
-        { error: "Authentication failed" },
-        { status: 500 }
-      );
-    }
+        const {email, password} = await req.json()
 
-    return NextResponse.json(
-      { success: true, message: "Login successful" },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Invalid request", detail: (error as Error).message },
-      { status: 400 }
-    );
-  }
+
+        const user = await prisma.user.findUnique({
+            where: {email: email as string}
+        })
+
+        if (!user) {
+            return NextResponse.json(
+                {error: "User not found"},
+                {status: 401}
+            )
+        }
+        if (!user.password) {
+            return NextResponse.json(
+                {error: "User dont have password"},
+                {status: 401}
+            )
+        }
+
+        // Add password verification here
+        const isValid = await Bcrypt.compare(
+            password as string,
+            user.password
+        )
+        if (!isValid) {
+             return NextResponse.json(
+                {error: "Invalid password"},
+                {status: 401}
+            )
+        }
+        const result = await signIn("credentials", {
+            email,
+            password,
+            redirect: false,
+        })
+
+        if (result?.error) {
+            return NextResponse.json(
+                {error: "Invalid credentials"},
+                {status: 401}
+            )
+        }
+
+        return NextResponse.json(
+            {success: true},
+            {status: 200}
+        )
+    } catch (error) {
+        return NextResponse.json(
+            {error: "Invalid request", detail: (error as Error).message},
+            {status: 400}
+        )
+    }
 }

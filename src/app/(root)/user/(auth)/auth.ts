@@ -6,37 +6,36 @@ import {prisma} from "@/shared/lib/db";
 
 export const {handlers, auth, signIn, signOut} = NextAuth({
     adapter: PrismaAdapter(prisma),
-    providers: [
+        providers: [
         Credentials({
             credentials: {
                 email: {label: "Email", type: "email"},
                 password: {label: "Password", type: "password"},
             },
             authorize: async (credentials) => {
-
                 if (!credentials?.email || !credentials?.password) {
-                    return null;
+                    return null
                 }
 
                 const user = await prisma.user.findUnique({
                     where: {email: credentials.email as string}
-                });
-                console.log(user)
+                })
 
                 if (!user || !user.password) {
-                    return null;
+                    return null
                 }
 
-                const isPasswordValid = await Bcrypt.compare(
+                // Add password verification here
+                const isValid = await Bcrypt.compare(
                     credentials.password as string,
                     user.password
-                );
+                )
 
-                if (!isPasswordValid) {
-                    throw new Error("password does not match")
+                if (!isValid) {
+                    return null
                 }
 
-                return user;
+                return user
             }
         }),
     ],
