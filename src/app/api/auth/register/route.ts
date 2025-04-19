@@ -52,33 +52,3 @@ export async function POST(req: NextRequest) {
         );
     }
 }
-//
-// export async function signup({
-//                                  name,
-//                                  email,
-//                                  password,
-//                              }: {
-//     name: string
-//     email: string
-//     password: string
-// }) {
-//     const hashedPassword = await Bcrypt.hash(password)
-//
-//     const existingUser = await prisma.user.findUnique({
-//         where: {email},
-//     })
-//
-//     if (!existingUser) {
-//         const userData: Prisma.UserCreateInput = {
-//             email,
-//             name,
-//             password: hashedPassword,
-//         }
-//
-//         await prisma.user.create({
-//             data: userData,
-//         })
-//     }
-//
-//     await signIn("credentials", {email, password})
-// }
