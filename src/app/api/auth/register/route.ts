@@ -2,7 +2,7 @@
 
 import {signIn} from "@/app/(root)/user/(auth)/auth"
 import {prisma} from "@/shared/lib/db"
-import {Prisma} from ".prisma/client"
+import {Prisma} from "@prisma/client"
 import Bcrypt from "@/shared/lib/bcrypt"
 import {NextRequest, NextResponse} from "next/server";
 
