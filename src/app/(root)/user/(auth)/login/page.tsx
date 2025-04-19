@@ -1,67 +1,88 @@
-import {signIn} from "@/app/(root)/user/(auth)/auth";
+"use client"
+
 import Navbar from "@/shared/ui/basics/navbar/Navbar";
 import Footer from "@/shared/ui/basics/Footer";
-import {redirect} from "next/navigation";
 
-interface Props {
-  params: Promise<{ slug: string[] }>;
-  searchParams: Promise<{ error?: string }>;
-}
+import {useForm} from "react-hook-form"
+import {z} from "zod"
 
-export default async function Page(props: Props) {
-    const searchParams = await props.searchParams;
-    const hasError = searchParams.error === '1';
+import {Button} from "@/components/ui/button"
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form"
+import {Input} from "@/components/ui/input"
+import {zodResolver} from "@hookform/resolvers/zod";
+import {formSchema} from "@/shared/lib/zod";
+
+
+export default async function Page() {
+
+    const form = useForm<z.infer<typeof formSchema>>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    })
+
+    async function onSubmit(data: { email: string, password: string }
+    ) {
+        const res = await fetch("/api/auth/login", {
+            method: "POST",
+            body: JSON.stringify(data)
+        });
+        // TODO: extend error handling
+
+
+
+    }
 
     return (
         <>
             <Navbar/>
             <div className="flex justify-center h-140 mt-55">
-                <form
-                    className="card bg-base-100 w-96 shadow-sm"
-                    action={async (formData) => {
-                        "use server"
-                        try {
-                            await signIn("credentials", {
-                                email: formData.get("email") as string,
-                                password: formData.get("password") as string,
-                                redirect: false,
-                            })
-                        } catch (e) {
-                            redirect('/user/login?error=1');
-                        }
-                        redirect('/');
-                    }}
-                >
-                    <div className="flex justify-center">
-                        <h1 className="text-6xl">Login</h1>
-                    </div>
-
-                    {hasError && (
-                        <div className="text-red-500 text-center mb-4">
-                            Check your credentials
-                        </div>
-                    )}
-
-                    <div className="card-body">
-                        <input
+                <Form {...form} >
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
+                        <FormField
+                            control={form.control}
                             name="email"
-                            type="email"
-                            placeholder="Email"
-                            className="input input-bordered"
-                            required
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>E-mail</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="email" {...field} />
+                                    </FormControl>
+                                    {/*<FormDescription>*/}
+                                    {/*    This is your email address that you registered with*/}
+                                    {/*</FormDescription>*/}
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
                         />
-                        <input
+                        <FormField
+                            control={form.control}
                             name="password"
-                            type="password"
-                            placeholder="Password"
-                            className="input input-bordered"
-                            required
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder="password" type="password" {...field} />
+                                    </FormControl>
+                                    {/*<FormDescription>*/}
+                                    {/*    This is your password that you registered with*/}
+                                    {/*</FormDescription>*/}
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
                         />
-                        <button type="submit" className="btn btn-primary">
-                            Sign In
-                        </button>
-                    </div>
-                </form>
+                        <Button type="submit">Submit</Button>
+                    </form>
+                </Form>
             </div>
             <Footer/>
         </>

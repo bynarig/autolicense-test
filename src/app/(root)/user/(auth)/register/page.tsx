@@ -1,7 +1,7 @@
 import Navbar from "@/shared/ui/basics/navbar/Navbar"
 import Footer from "@/shared/ui/basics/Footer"
 import {signup} from "./register"
-import {signInSchema} from "@/shared/lib/zod";
+import {formSchema} from "@/shared/lib/zod";
 import { redirect } from "next/navigation";
 
 interface Props {
@@ -31,7 +31,7 @@ export default async function RegisterPage(props: Props) {
             }
 
             // Validate on server before submitting
-            const result = signInSchema.safeParse(data)
+            const result = formSchema.safeParse(data)
             if (!result.success) {
               const errors: Record<string, string> = {}
               result.error.errors.forEach((err) => {
