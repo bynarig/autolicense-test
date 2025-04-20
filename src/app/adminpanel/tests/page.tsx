@@ -84,7 +84,6 @@ export default function Page() {
 		if (data.search.length == 0) {
 			res = await fetch("/api/admin/tests", {
 				method: "GET",
-				// body: JSON.stringify(dataToSend),
 				headers: { "Content-Type": "application/json" },
 			});
 		} else {
@@ -116,10 +115,12 @@ export default function Page() {
 		});
 		if (res.status === 200) {
 			const json = await res.json();
-			setTests(json.data);
+			// Update tests array by adding the new test
+			setTests((prevTests) => [...prevTests, json.data]);
+			// Or refetch all tests
+			// onSubmit({ search: "" });
 			toast("Test successfully created.");
 		} else {
-			setTests([]);
 			const json = await res.json();
 			toast(
 				`Failed to create test. err code: ${res.status} errmsg: ${json.error} data sended ${data.testName}`,
@@ -290,16 +291,18 @@ export default function Page() {
 									<Button
 										variant="ghost"
 										className="copy-btn"
-										data-clipboard-text={test.author.name}
+										data-clipboard-text={test?.author?.name || "no data"}
 									>
-										{test.author.name}
+										{test?.author?.name || "no data"}
 									</Button>
 								</TableCell>
 								<TableCell>
 									<Button
 										variant="ghost"
 										className="copy-btn"
-										data-clipboard-text={test.timeCompleted || "no data"}
+										data-clipboard-text={
+											test.timeCompleted || "no data"
+										}
 									>
 										{test.timeCompleted || "no data"}
 									</Button>
