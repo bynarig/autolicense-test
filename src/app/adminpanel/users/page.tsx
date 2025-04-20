@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ArrowDownIcon } from "lucide-react";
+import {ArrowDownIcon, Search} from "lucide-react";
 import { searchSchema } from "@/shared/lib/zod";
 import {
 	Form,
@@ -135,7 +135,7 @@ export default function Page() {
 									</FormItem>
 								)}
 							/>
-							<Button type="submit">Submit</Button>
+							<Button type="submit"><Search/>Search</Button>
 						</div>
 					</form>
 				</Form>

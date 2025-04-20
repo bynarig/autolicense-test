@@ -60,11 +60,11 @@ model Test {
 
   category      String[]   @default(["main"])
   tags          String[]
-  title         String
+  title         String?
   slug          String?    @unique
   description   String?
   difficulty    String?
-  timeCompleted Int
+  timeCompleted Int?
   content       String?
   published     Boolean    @default(false)
 
@@ -75,7 +75,7 @@ model Test {
   Question      Question[]
 
   authorId      String     @db.ObjectId
-  author        User       @relation(fields: [authorId], references: [id])
+  author        User      @relation(fields: [authorId], references: [id])
 }
 
 
