@@ -1,9 +1,11 @@
+import Image from "next/image";
+
 export default function TestCard() {
 	return (
 		<>
 			<div className="card bg-base-100 w-140 shadow-sm">
 				<figure>
-					<img
+					<Image
 						src="https://www.tintmyridedenver.com/wp-content/uploads/denver-auto-show.jpg"
 						alt="Shoes"
 					/>

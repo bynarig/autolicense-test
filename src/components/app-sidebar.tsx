@@ -1,14 +1,6 @@
-"use client"
+"use client";
 
-import {
-	User,
-	Home,
-	Inbox,
-	Search,
-	Settings,
-	User2,
-	ChevronUp, ScrollText,
-} from "lucide-react";
+import { User, Home, User2, ChevronUp, ScrollText } from "lucide-react";
 
 import {
 	Sidebar,
@@ -28,9 +20,8 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import {Button} from "@/components/ui/button";
-import {clientSignOut} from "@/app/(root)/user/(auth)/auth-actions";
-import {useSession} from "next-auth/react";
+import { clientSignOut } from "@/app/(root)/user/(auth)/auth-actions";
+import { useSession } from "next-auth/react";
 import { Suspense } from "react";
 
 // Menu items.
@@ -68,7 +59,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-	const {data: session, status} = useSession();
+	const { data: session } = useSession();
 
 	return (
 		<>
@@ -77,15 +68,19 @@ export function AppSidebar() {
 					<Sidebar>
 						<SidebarContent>
 							<SidebarGroup>
-								<SidebarGroupLabel>Application</SidebarGroupLabel>
+								<SidebarGroupLabel>
+									Application
+								</SidebarGroupLabel>
 								<SidebarGroupContent>
 									<SidebarMenu>
 										{items.map((item) => (
 											<SidebarMenuItem key={item.title}>
 												<SidebarMenuButton asChild>
 													<a href={item.url}>
-														<item.icon/>
-														<span>{item.title}</span>
+														<item.icon />
+														<span>
+															{item.title}
+														</span>
 													</a>
 												</SidebarMenuButton>
 											</SidebarMenuItem>
@@ -100,8 +95,9 @@ export function AppSidebar() {
 									<DropdownMenu>
 										<DropdownMenuTrigger asChild>
 											<SidebarMenuButton>
-												<User2/> {session?.user.name || "Admin"}
-												<ChevronUp className="ml-auto"/>
+												<User2 />{" "}
+												{session?.user.name || "Admin"}
+												<ChevronUp className="ml-auto" />
 											</SidebarMenuButton>
 										</DropdownMenuTrigger>
 										<DropdownMenuContent
@@ -109,10 +105,18 @@ export function AppSidebar() {
 											className="w-[--radix-popper-anchor-width]"
 										>
 											<DropdownMenuItem>
-												<Link href="/user/profile">Account</Link>
+												<Link href="/user/profile">
+													Account
+												</Link>
 											</DropdownMenuItem>
 											<DropdownMenuItem>
-												<span onClick={() => clientSignOut()}>Sign out</span>
+												<span
+													onClick={() =>
+														clientSignOut()
+													}
+												>
+													Sign out
+												</span>
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>

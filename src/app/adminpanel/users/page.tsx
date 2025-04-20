@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import {
 	Table,
 	TableBody,
@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {ArrowDownIcon, Search} from "lucide-react";
+import { ArrowDownIcon, Search } from "lucide-react";
 import { searchSchema } from "@/shared/lib/zod";
 import {
 	Form,
@@ -67,11 +67,7 @@ export default function Page() {
 		}
 	}
 
-	React.useEffect(() => {
-		onSubmit({ search: "" });
-	}, []);
-
-	async function onSubmit(data: { search: string }) {
+	const onSubmit = useCallback(async (data: { search: string }) => {
 		const dataToSend = {
 			data,
 			inputType: validateInput(data.search),
@@ -102,8 +98,11 @@ export default function Page() {
 				`Failed to get users. err code: ${res.status} errmsg: ${json.error}`,
 			);
 		}
-	}
+	}, []);
 
+	React.useEffect(() => {
+		onSubmit({ search: "" });
+	}, [onSubmit]);
 	const form = useForm<z.infer<typeof searchSchema>>({
 		defaultValues: {
 			search: "",
@@ -135,7 +134,10 @@ export default function Page() {
 									</FormItem>
 								)}
 							/>
-							<Button type="submit"><Search/>Search</Button>
+							<Button type="submit">
+								<Search />
+								Search
+							</Button>
 						</div>
 					</form>
 				</Form>

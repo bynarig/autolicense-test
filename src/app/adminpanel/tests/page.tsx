@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -71,11 +71,7 @@ export default function Page() {
 		}
 	}
 
-	React.useEffect(() => {
-		onSubmit({ search: "" });
-	}, []);
-
-	async function onSubmit(data: { search: string }) {
+	const onSubmit = useCallback(async (data: { search: string }) => {
 		const dataToSend = {
 			data,
 			inputType: validateInput(data.search),
@@ -105,7 +101,11 @@ export default function Page() {
 				`Failed to get tests. err code: ${res.status} errmsg: ${json.error}`,
 			);
 		}
-	}
+	}, []);
+
+	React.useEffect(() => {
+		onSubmit({ search: "" });
+	}, [onSubmit]);
 
 	async function onTestCreate(data: { testName: string }) {
 		const res = await fetch("/api/admin/tests", {
@@ -179,7 +179,7 @@ export default function Page() {
 							<DialogTitle>Create NEW test</DialogTitle>
 							<DialogDescription>
 								Create name for your test. Click save when
-								you're done.
+								you&apos;re done.
 							</DialogDescription>
 						</DialogHeader>
 						<div className="grid gap-4 py-4">
@@ -291,7 +291,9 @@ export default function Page() {
 									<Button
 										variant="ghost"
 										className="copy-btn"
-										data-clipboard-text={test?.author?.name || "no data"}
+										data-clipboard-text={
+											test?.author?.name || "no data"
+										}
 									>
 										{test?.author?.name || "no data"}
 									</Button>

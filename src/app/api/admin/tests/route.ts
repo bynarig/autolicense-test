@@ -5,7 +5,7 @@ import { prisma } from "@/shared/lib/db";
 import { auth } from "@/app/(root)/user/(auth)/auth";
 import { isAdmin } from "@/features/role-check";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
 	try {
 		const response = await prisma.test.findMany({
 			include: {

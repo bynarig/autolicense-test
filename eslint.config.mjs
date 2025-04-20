@@ -20,8 +20,11 @@ const eslintConfig = [
 		rules: {
 			quotes: ["error", "double"],
 			semi: ["error", "always"],
+			"@typescript-eslint/no-unused-vars": "off",
+			"@typescript-eslint/no-explicit-any": "off",
+			"@next/next/no-img-element": "off",
 		},
 	}),
-	[globalIgnores(["src/shared/prisma/*"])],
+	// [globalIgnores(["src/shared/prisma/*"])],
 ];
 export default eslintConfig;

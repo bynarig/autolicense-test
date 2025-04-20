@@ -47,7 +47,7 @@ export default function RootLayout({
 						<SidebarProvider>
 							<AppSidebar />
 							<SidebarTrigger />
-							<AdminStrict/>
+							<AdminStrict />
 							{children}
 						</SidebarProvider>
 						<Toaster />

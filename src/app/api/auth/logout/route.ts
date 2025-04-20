@@ -1,9 +1,9 @@
 "use server";
 
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { signOut } from "@/app/(root)/user/(auth)/auth";
 
-export async function POST(req: NextRequest) {
+export async function POST() {
 	try {
 		await signOut({ redirect: false });
 		return NextResponse.json(
