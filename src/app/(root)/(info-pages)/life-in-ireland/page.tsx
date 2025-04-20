@@ -1,6 +1,3 @@
 export default function Page() {
-  return (<>
-    here about life
-    </>
-  );
+	return <>here about life</>;
 }

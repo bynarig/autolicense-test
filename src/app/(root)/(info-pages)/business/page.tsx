@@ -1,6 +1,3 @@
 export default function Page() {
-  return (<>
-    here about business
-    </>
-  );
+	return <>here about business</>;
 }

@@ -7,17 +7,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const compat = new FlatCompat({
-  baseDirectory: __dirname,
-
+	baseDirectory: __dirname,
 });
 
 const eslintConfig = [
-  ...compat.config({
-    extends: ['next/core-web-vitals', 'next/typescript'],
-    rules:{
-     }
-  }),
-  [globalIgnores(["src/shared/prisma/*"])]
-
-]
+	...compat.config({
+		extends: [
+			"next/core-web-vitals",
+			"next/typescript",
+			"plugin:prettier/recommended",
+		],
+		rules: {
+			quotes: ["error", "double"],
+			semi: ["error", "always"],
+		},
+	}),
+	[globalIgnores(["src/shared/prisma/*"])],
+];
 export default eslintConfig;

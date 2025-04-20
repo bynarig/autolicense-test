@@ -1,6 +1,3 @@
 export default function Page() {
-  return (<>
-    here about cars
-    </>
-  );
+	return <>here about cars</>;
 }
