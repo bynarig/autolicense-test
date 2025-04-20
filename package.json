@@ -69,5 +69,10 @@
 	},
 	"prisma": {
 		"schema": "src/shared/prisma/schema.prisma"
+	},
+	"pnpm": {
+		"overrides": {
+			"@auth/core": "^0.38.0"
+		}
 	}
 }
