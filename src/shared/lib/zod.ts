@@ -14,3 +14,7 @@ export const formSchema = z.object({
 export const searchSchema = z.object({
 	search: z.string(),
 });
+
+export const testValidationSchema = z.object({
+	name: z.string(),
+});

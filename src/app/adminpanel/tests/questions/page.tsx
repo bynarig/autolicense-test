@@ -38,7 +38,7 @@ import {
 import { Label } from "@/components/ui/label";
 
 export default function Page() {
-	const [tests, setTests] = useState<any[]>([]);
+	const [questions, setquestions] = useState<any[]>([]);
 
 	React.useEffect(() => {
 		const clipboard = new ClipboardJS(".copy-btn", {
@@ -78,12 +78,12 @@ export default function Page() {
 		};
 		let res;
 		if (data.search.length == 0) {
-			res = await fetch("/api/admin/tests", {
+			res = await fetch("/api/admin/tests/questions", {
 				method: "GET",
 				headers: { "Content-Type": "application/json" },
 			});
 		} else {
-			res = await fetch("/api/admin/tests", {
+			res = await fetch("/api/admin/tests/questions", {
 				method: "GET",
 				body: JSON.stringify(dataToSend),
 				headers: { "Content-Type": "application/json" },
@@ -92,13 +92,13 @@ export default function Page() {
 
 		if (res.status === 200) {
 			const json = await res.json();
-			setTests(json.data);
-			toast("Test successfully fetched.");
+			setquestions(json.data);
+			toast("question successfully fetched.");
 		} else {
-			setTests([]);
+			setquestions([]);
 			const json = await res.json();
 			toast(
-				`Failed to get tests. err code: ${res.status} errmsg: ${json.error}`,
+				`Failed to get questions. err code: ${res.status} errmsg: ${json.error}`,
 			);
 		}
 	}, []);
@@ -107,23 +107,23 @@ export default function Page() {
 		onSubmit({ search: "" });
 	}, [onSubmit]);
 
-	async function onTestCreate(data: { testName: string }) {
-		const res = await fetch("/api/admin/tests", {
+	async function onquestionCreate(data: { questionName: string }) {
+		const res = await fetch("/api/admin/tests/questions", {
 			method: "POST",
 			body: JSON.stringify(data),
 			headers: { "Content-Type": "application/json" },
 		});
 		if (res.status === 200) {
 			const json = await res.json();
-			// Update tests array by adding the new test
-			setTests((prevTests) => [...prevTests, json.data]);
-			// Or refetch all tests
+			// Update questions array by adding the new question
+			setquestions((prevquestions) => [...prevquestions, json.data]);
+			// Or refetch all questions
 			// onSubmit({ search: "" });
-			toast("Test successfully created.");
+			toast("question successfully created.");
 		} else {
 			const json = await res.json();
 			toast(
-				`Failed to create test. err code: ${res.status} errmsg: ${json.error} data sended ${data.testName}`,
+				`Failed to create question. err code: ${res.status} errmsg: ${json.error} data sended ${data.questionName}`,
 			);
 		}
 	}
@@ -150,7 +150,7 @@ export default function Page() {
 										<FormControl>
 											<Input
 												type="text"
-												placeholder="search test"
+												placeholder="search question"
 												{...field}
 											/>
 										</FormControl>
@@ -169,16 +169,16 @@ export default function Page() {
 				<Dialog>
 					<DialogTrigger asChild>
 						<Button variant="outline">
-							Create new Test
+							Create new question
 							<PlusIcon />
 						</Button>
 					</DialogTrigger>
 
 					<DialogContent className="sm:max-w-[425px]">
 						<DialogHeader>
-							<DialogTitle>Create NEW test</DialogTitle>
+							<DialogTitle>Create NEW question</DialogTitle>
 							<DialogDescription>
-								Create name for your test. Click save when
+								Create name for your question. Click save when
 								you&apos;re done.
 							</DialogDescription>
 						</DialogHeader>
@@ -188,8 +188,8 @@ export default function Page() {
 									Name
 								</Label>
 								<Input
-									id="newtestname"
-									defaultValue="New Test"
+									id="newquestionname"
+									defaultValue="New question"
 									className="col-span-3"
 								/>
 							</div>
@@ -199,11 +199,13 @@ export default function Page() {
 								onClick={() => {
 									const inputValue = (
 										document.getElementById(
-											"newtestname",
+											"newquestionname",
 										) as HTMLInputElement
 									)?.value;
 									if (inputValue) {
-										onTestCreate({ testName: inputValue });
+										onquestionCreate({
+											questionName: inputValue,
+										});
 									}
 								}}
 								type="submit"
@@ -216,7 +218,7 @@ export default function Page() {
 			</div>
 			{/* Table */}
 			<Table>
-				<TableCaption>A list of all tests.</TableCaption>
+				<TableCaption>A list of all questions.</TableCaption>
 				<TableHeader>
 					<TableRow>
 						<TableHead>№</TableHead>
@@ -233,17 +235,19 @@ export default function Page() {
 					</TableRow>
 				</TableHeader>
 				<TableBody>
-					{tests === undefined || tests.length === 0 ? (
+					{questions === undefined || questions.length === 0 ? (
 						<TableRow>
 							<TableCell colSpan={7} className="text-center">
-								No tests found.
+								No questions found.
 							</TableCell>
 						</TableRow>
 					) : (
-						tests.map((test, idx) => (
-							<TableRow key={test.id}>
+						questions.map((question, idx) => (
+							<TableRow key={question.id}>
 								<TableCell>
-									<Link href={`/adminpanel/tests/${test.id}`}>
+									<Link
+										href={`/adminpanel/tests/questions/${question.id}`}
+									>
 										<Button variant="ghost">
 											{idx + 1}
 										</Button>
@@ -253,18 +257,18 @@ export default function Page() {
 									<Button
 										variant="ghost"
 										className="copy-btn"
-										data-clipboard-text={test.id}
+										data-clipboard-text={question.id}
 									>
-										{test.id}
+										{question.id}
 									</Button>
 								</TableCell>
 								<TableCell>
 									<Button
 										variant="ghost"
 										className="copy-btn"
-										data-clipboard-text={test.title}
+										data-clipboard-text={question.title}
 									>
-										{test.title}
+										{question.title}
 									</Button>
 								</TableCell>
 								<TableCell>
@@ -272,16 +276,16 @@ export default function Page() {
 										variant="ghost"
 										className="copy-btn"
 										data-clipboard-text={
-											test.createdAt
+											question.createdAt
 												? new Date(
-														test.createdAt,
+														question.createdAt,
 													).toLocaleDateString()
 												: "—"
 										}
 									>
-										{test.createdAt
+										{question.createdAt
 											? new Date(
-													test.createdAt,
+													question.createdAt,
 												).toLocaleDateString()
 											: "—"}
 									</Button>
@@ -292,13 +296,13 @@ export default function Page() {
 										variant="ghost"
 										className="copy-btn"
 										data-clipboard-text={
-											test?.author?.name ||
-											test?.author?.id ||
+											question?.author?.name ||
+											question?.author?.id ||
 											"no data"
 										}
 									>
-										{test?.author?.name ||
-											`id: ${test?.author?.id}` ||
+										{question?.author?.name ||
+											`id: ${question?.author?.id}` ||
 											"no data"}
 									</Button>
 								</TableCell>
@@ -307,10 +311,10 @@ export default function Page() {
 										variant="ghost"
 										className="copy-btn"
 										data-clipboard-text={
-											test.timeCompleted || "no data"
+											question.timeCompleted || "no data"
 										}
 									>
-										{test.timeCompleted || "no data"}
+										{question.timeCompleted || "no data"}
 									</Button>
 								</TableCell>
 							</TableRow>

@@ -1,6 +1,13 @@
 "use client";
 
-import { User, Home, User2, ChevronUp, ScrollText } from "lucide-react";
+import {
+	User,
+	Home,
+	User2,
+	ChevronUp,
+	ScrollText,
+	ShieldQuestionIcon,
+} from "lucide-react";
 
 import {
 	Sidebar,
@@ -45,6 +52,11 @@ const items = [
 		title: "Tests",
 		url: "/adminpanel/tests",
 		icon: ScrollText,
+	},
+	{
+		title: "Questions",
+		url: "/adminpanel/tests/questions",
+		icon: ShieldQuestionIcon,
 	},
 	// {
 	// 	title: "Search",

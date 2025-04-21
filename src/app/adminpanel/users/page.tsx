@@ -31,7 +31,6 @@ export default function Page() {
 	const [users, setUsers] = useState<any[]>([]);
 
 	React.useEffect(() => {
-		// Initialize clipboard.js
 		const clipboard = new ClipboardJS(".copy-btn", {
 			text: function (trigger) {
 				return trigger.getAttribute("data-clipboard-text") || "";
@@ -48,7 +47,7 @@ export default function Page() {
 		});
 
 		return () => {
-			clipboard.destroy(); // Cleanup on component unmount
+			clipboard.destroy();
 		};
 	}, []);
 
@@ -103,6 +102,7 @@ export default function Page() {
 	React.useEffect(() => {
 		onSubmit({ search: "" });
 	}, [onSubmit]);
+
 	const form = useForm<z.infer<typeof searchSchema>>({
 		defaultValues: {
 			search: "",

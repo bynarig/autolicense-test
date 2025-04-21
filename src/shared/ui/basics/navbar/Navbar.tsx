@@ -89,8 +89,7 @@ export default function Navbar() {
 								</ListItem>
 							</ul>
 						</NavigationMenuContent>
-					</NavigationMenuItem>
-					<NavigationMenuItem>
+
 						<NavigationMenuTrigger>
 							Components
 						</NavigationMenuTrigger>
@@ -107,9 +106,14 @@ export default function Navbar() {
 								))}
 							</ul>
 						</NavigationMenuContent>
+
+						{session?.user.role === "ADMIN" ? (
+							<Link href="/adminpanel">Admin panel</Link>
+						) : null}
 					</NavigationMenuItem>
 				</NavigationMenuList>
 			</NavigationMenu>
+
 			{session ? (
 				<DropdownMenu>
 					<DropdownMenuTrigger className="md:mr-[15px] md:mt-[5px] md:mb-[5px]">

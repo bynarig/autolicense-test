@@ -95,6 +95,13 @@ export default function Page() {
 							)}
 						/>
 						<Button type="submit">Submit</Button>
+						<Button
+							type="button"
+							variant="link"
+							onClick={() => router.push("/user/register")}
+						>
+							register instead
+						</Button>
 					</form>
 				</Form>
 			</div>

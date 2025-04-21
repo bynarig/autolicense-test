@@ -8,7 +8,7 @@ generator client {
   provider        = "prisma-client-js"
   output          = "../../../node_modules/.prisma/client"
   previewFeatures = ["prismaSchemaFolder"]
-  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -19,7 +19,7 @@ datasource db {
 // Include User model
 model User {
   id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  email     String?    @unique
+  email     String?   @unique
   password  String?
   username  String?   @unique
   name      String?
@@ -43,7 +43,8 @@ model User {
 
   role Role @default(UNAPPROVED)
 
-  test Test[]
+  test     Test[]
+  Question Question[]
 }
 
 enum Role {
@@ -53,31 +54,30 @@ enum Role {
 }
 
 model Test {
-  id            String     @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt     DateTime   @default(now())
-  editedAt      DateTime?
-  deletedAt     DateTime?
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @default(now())
+  editedAt  DateTime?
+  deletedAt DateTime?
 
-  category      String[]   @default(["main"])
+  category      String[] @default(["main"])
   tags          String[]
   title         String?
-  slug          String?    @unique
+  slug          String?  @unique
   description   String?
   difficulty    String?
   timeCompleted Int?
   content       String?
-  published     Boolean    @default(false)
+  published     Boolean  @default(false)
 
-  views         Int        @default(0)
-  attempts      Int        @default(0)
-  maxScore      Int?
+  views    Int  @default(0)
+  attempts Int  @default(0)
+  maxScore Int?
 
-  Question      Question[]
+  Question Question[]
 
-  authorId      String     @db.ObjectId
-  author        User      @relation(fields: [authorId], references: [id])
+  authorId String @db.ObjectId
+  author   User   @relation(fields: [authorId], references: [id])
 }
-
 
 model Question {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -89,22 +89,28 @@ model Question {
   order       Int?
   points      Int      @default(1)
 
-  testId      String?  @db.ObjectId
-  Test        Test?    @relation(fields: [testId], references: [id])
+  testId String? @db.ObjectId
+  Test   Test?   @relation(fields: [testId], references: [id])
 
-  answers     Answer[]
+  answers Answer[]
+
+  authorId String @db.ObjectId
+  author   User   @relation(fields: [authorId], references: [id])
+
+  questionDiscussion QuestionDiscussion?
 }
-
 
 model Answer {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  isTrue      Boolean
-  price       Int      @default(1)
-  order       Int?
-  feedback    String?
+  id       String  @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  isTrue   Boolean
+  price    Int     @default(1)
+  feedback String?
 
-  questionId  String   @db.ObjectId
-  question    Question @relation(fields: [questionId], references: [id])
+  questionId String   @db.ObjectId
+  question   Question @relation(fields: [questionId], references: [id])
 }
 
+type QuestionDiscussion {
+  text String
+}

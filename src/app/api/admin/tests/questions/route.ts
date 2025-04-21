@@ -8,7 +8,7 @@ import { isAdmin } from "@/features/role-check";
 export async function GET() {
 	try {
 		if (await isAdmin()) {
-			const response = await prisma.test.findMany({
+			const response = await prisma.question.findMany({
 				include: {
 					author: {
 						select: {
@@ -37,15 +37,15 @@ export async function GET() {
 export async function POST(req: NextRequest) {
 	try {
 		if (await isAdmin()) {
-			const { testName } = await req.json();
+			const { questionName } = await req.json();
 			const session = await auth();
 			const autorSessionId = session?.user.id;
 			const testData = {
-				title: testName,
+				title: questionName,
 				authorId: autorSessionId,
 			};
 
-			const response = await prisma.test.create({
+			const response = await prisma.question.create({
 				data: testData,
 			});
 

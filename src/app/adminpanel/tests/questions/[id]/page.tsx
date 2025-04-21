@@ -30,9 +30,12 @@ import { redirect, useParams } from "next/navigation";
 
 export default function Page() {
 	const params = useParams();
-	const [testData, setTestData] = useState<any>(null);
+	const [questionData, setquestionData] = useState<any>(null);
 
-	async function onUpdateTestData(data: { email: string; password: string }) {
+	async function onUpdatequestionData(data: {
+		email: string;
+		password: string;
+	}) {
 		const res = await clientSignIn(data);
 
 		if (res.ok) {
@@ -44,22 +47,22 @@ export default function Page() {
 			// console.error("Login failed:", errorData.error)
 		}
 	}
-	async function onTestDelete() {
+
+	async function onQuestionDelete() {
 		const id = params.id;
-		const res = await fetch(`/api/admin/tests/${id}`, {
+		const res = await fetch(`/api/admin/tests/questions/${id}`, {
 			method: "DELETE",
 			headers: { "Content-Type": "application/json" },
 		});
 		if (res.status === 200) {
 			const json = await res.json();
-			redirect("/adminpanel/tests");
-			// setTestData(json.data);
-			toast(`Test id:${id} deleted.`);
+			redirect("/adminpanel/tests/questions");
+			toast(`Question id:${id} deleted.`);
 		} else {
 			// setTestData([]);
 			const json = await res.json();
 			toast(
-				`Failed to delete test. err code: ${res.status} errmsg: ${json.error}`,
+				`Failed to delete question. err code: ${res.status} errmsg: ${json.error}`,
 			);
 		}
 	}
@@ -71,43 +74,45 @@ export default function Page() {
 	});
 
 	React.useEffect(() => {
-		if (testData) {
+		if (questionData) {
 			form.reset({
-				name: testData.title || "",
+				name: questionData.title || "",
 			});
 		}
-	}, [testData, form]);
+	}, [questionData, form]);
 
-	const getTestData = useCallback(async () => {
+	const getquestionData = useCallback(async () => {
 		const id = params.id;
-		const res = await fetch(`/api/admin/tests/${id}`, {
+		const res = await fetch(`/api/admin/tests/questions/${id}`, {
 			method: "GET",
 			headers: { "Content-Type": "application/json" },
 		});
 		if (res.status === 200) {
 			const json = await res.json();
-			setTestData(json.data);
-			toast(`Test id:${id} fetched.`);
+			setquestionData(json.data);
+			toast(`question id:${id} fetched.`);
 		} else {
-			setTestData([]);
+			setquestionData([]);
 			const json = await res.json();
 			toast(
-				`Failed to get test. err code: ${res.status} errmsg: ${json.error}`,
+				`Failed to get users. err code: ${res.status} errmsg: ${json.error}`,
 			);
 		}
 	}, [params.id]);
 
 	React.useEffect(() => {
-		getTestData();
-	}, [getTestData]);
+		getquestionData();
+	}, [getquestionData]);
 
 	return (
 		<>
 			<div className="flex flex-col justify-left w-full mt-[20px]">
-				<h1 className="text-2xl font-bold">TEST ID: {testData?.id}</h1>
+				<h1 className="text-2xl font-bold">
+					question ID: {questionData?.id}
+				</h1>
 				<Form {...form}>
 					<form
-						// onSubmit={form.handleSubmit(onUpdateTestData)}
+						// onSubmit={form.handleSubmit(onUpdatequestionData)}
 						className="space-y-8 "
 					>
 						<div className="flex flex-row space-y-4">
@@ -130,19 +135,19 @@ export default function Page() {
 							/>
 						</div>
 						<p>
-							Author: {testData?.author.name} & id:{" "}
-							{testData?.author.id}
+							Author: {questionData?.author?.name} & id:{" "}
+							{questionData?.author?.id}
 						</p>
-						<p>Created At: {testData?.createdAt}</p>
-						<p>Edited At: {testData?.editedAt || "never"}</p>
-						<p>Views: {testData?.views || 0}</p>
-						<p>Attempts: {testData?.attempts || 0}</p>
-						<p>TimeCompleted: {testData?.timeCompleted || 0}</p>
-						<p>MaxScore: {testData?.maxScore || 0}</p>
+						<p>Created At: {questionData?.createdAt}</p>
+						<p>Edited At: {questionData?.editedAt || "never"}</p>
+						<p>Views: {questionData?.views || 0}</p>
+						<p>Attempts: {questionData?.attempts || 0}</p>
+						<p>TimeCompleted: {questionData?.timeCompleted || 0}</p>
+						<p>MaxScore: {questionData?.maxScore || 0}</p>
 						<AlertDialog>
 							<AlertDialogTrigger asChild>
 								<Button variant="outline">
-									Update Test Data
+									Update question Data
 								</Button>
 							</AlertDialogTrigger>
 							<AlertDialogContent>
@@ -152,7 +157,7 @@ export default function Page() {
 									</AlertDialogTitle>
 									<AlertDialogDescription>
 										This action cannot be undone. This will
-										change this test data without any
+										change this question data without any
 										previous backups
 									</AlertDialogDescription>
 								</AlertDialogHeader>
@@ -168,7 +173,9 @@ export default function Page() {
 						</AlertDialog>
 						<AlertDialog>
 							<AlertDialogTrigger asChild>
-								<Button variant="outline">Delete TEST</Button>
+								<Button variant="outline">
+									Delete question
+								</Button>
 							</AlertDialogTrigger>
 							<AlertDialogContent>
 								<AlertDialogHeader>
@@ -186,7 +193,7 @@ export default function Page() {
 										Cancel
 									</AlertDialogCancel>
 									<AlertDialogAction
-										onClick={() => onTestDelete()}
+										onClick={() => onQuestionDelete()}
 									>
 										Delete
 									</AlertDialogAction>
