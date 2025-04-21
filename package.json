@@ -74,6 +74,16 @@
 	"pnpm": {
 		"overrides": {
 			"@auth/core": "^0.38.0"
-		}
+		},
+		"ignoredBuiltDependencies": [
+			"@prisma/client",
+			"@prisma/engines",
+			"esbuild",
+			"prisma",
+			"sharp"
+		],
+		"onlyBuiltDependencies": [
+			"unrs-resolver"
+		]
 	}
 }

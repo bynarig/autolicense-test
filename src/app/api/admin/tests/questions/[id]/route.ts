@@ -62,9 +62,6 @@ export async function DELETE(req: Request, { params }: { params: tParams }) {
 		if (await isAdmin()) {
 			const { id }: { id: string } = await params;
 
-			// const session = await auth();
-			// const autorSessionId = session?.user.id;
-
 			const response = await prisma.question.delete({
 				where: {
 					id: id,
