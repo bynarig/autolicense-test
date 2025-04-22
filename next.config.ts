@@ -13,6 +13,11 @@ const nextConfig: NextConfig = {
 				hostname: "img.daisyui.com",
 				pathname: "/**",
 			},
+			{
+				protocol: "https",
+				hostname: "i.imgur.com",
+				pathname: "/**",
+			},
 		],
 	},
 };

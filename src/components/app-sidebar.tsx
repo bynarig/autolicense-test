@@ -35,7 +35,7 @@ import { Suspense } from "react";
 const items = [
 	{
 		title: "Home",
-		url: "#",
+		url: "/adminpanel",
 		icon: Home,
 	},
 	// {
@@ -88,12 +88,12 @@ export function AppSidebar() {
 										{items.map((item) => (
 											<SidebarMenuItem key={item.title}>
 												<SidebarMenuButton asChild>
-													<a href={item.url}>
+													<Link href={item.url}>
 														<item.icon />
 														<span>
 															{item.title}
 														</span>
-													</a>
+													</Link>
 												</SidebarMenuButton>
 											</SidebarMenuItem>
 										))}

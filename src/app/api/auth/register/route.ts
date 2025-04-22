@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
 			const userData: Prisma.UserCreateInput = {
 				email,
 				password: hashedPassword,
+				name: email.split("@")[0],
 			};
 
 			await prisma.user.create({
@@ -35,16 +36,8 @@ export async function POST(req: NextRequest) {
 		try {
 			await signIn("credentials", { email, password });
 		} catch (err) {
-			return NextResponse.json(
-				{ error: "Authentication failed" },
-				{ status: 500 },
-			);
+			return NextResponse.json({ success: true }, { status: 200 });
 		}
-
-		return NextResponse.json(
-			{ success: true, message: "Register successful" },
-			{ status: 200 },
-		);
 	} catch (error) {
 		return NextResponse.json(
 			{ error: "Invalid request", detail: (error as Error).message },

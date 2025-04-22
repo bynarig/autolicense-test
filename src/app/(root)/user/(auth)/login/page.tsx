@@ -64,6 +64,8 @@ export default function Page() {
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="space-y-8 "
 					>
+						<p className="text-2xl font-bold">Login</p>
+
 						<FormField
 							control={form.control}
 							name="email"

@@ -34,8 +34,6 @@ export async function clientRegister(data: {
 	email: string;
 	password: string;
 }) {
-	toast("Event has been created.");
-
 	const res = await fetch("/api/auth/register", {
 		method: "POST",
 		body: JSON.stringify(data),
