@@ -61,9 +61,7 @@ export default function RootLayout({
 							<div className="fixed top-4 right-4 z-50">
 								<ModeToggle />
 							</div>
-							<main className='w-full'>
-								{children}
-							</main>
+							<main className="w-full">{children}</main>
 						</SidebarProvider>
 						<Toaster />
 					</SessionProvider>
