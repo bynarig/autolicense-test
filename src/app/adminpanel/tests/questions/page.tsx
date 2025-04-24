@@ -36,9 +36,23 @@ import {
 	DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { SearchForm } from "@/components/SearchForm";
+import { fetchQuestions } from "@/services/questionService";
+import {
+	Pagination,
+	PaginationContent,
+	PaginationItem,
+	PaginationLink,
+	PaginationNext,
+	PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export default function Page() {
-	const [questions, setquestions] = useState<any[]>([]);
+	const [questions, setQuestions] = useState<any[]>([]);
+	const [totalCount, setTotalCount] = useState<number>(0);
+	const [currentPage, setCurrentPage] = useState<number>(1);
+	const [searchTerm, setSearchTerm] = useState<string>("");
+	const itemsPerPage = 10;
 
 	React.useEffect(() => {
 		const clipboard = new ClipboardJS(".copy-btn", {
@@ -61,53 +75,30 @@ export default function Page() {
 		};
 	}, []);
 
-	function validateInput(inputUnedited: string) {
-		const input = inputUnedited.toLocaleLowerCase().trim();
-		if (input.length == 24) {
-			return "id";
-		}
-		if (searchSchema.safeParse(input).success) {
-			return "name";
-		}
-	}
-
-	const onSubmit = useCallback(async (data: { search: string }) => {
-		const dataToSend = {
-			data,
-			inputType: validateInput(data.search),
-		};
-		let res;
-		if (data.search.length == 0) {
-			res = await fetch("/api/admin/tests/questions", {
-				method: "GET",
-				headers: { "Content-Type": "application/json" },
-			});
-		} else {
-			res = await fetch("/api/admin/tests/questions", {
-				method: "GET",
-				body: JSON.stringify(dataToSend),
-				headers: { "Content-Type": "application/json" },
-			});
-		}
-
-		if (res.status === 200) {
-			const json = await res.json();
-			setquestions(json.data);
-			toast("question successfully fetched.");
-		} else {
-			setquestions([]);
-			const json = await res.json();
-			toast(
-				`Failed to get questions. err code: ${res.status} errmsg: ${json.error}`,
-			);
-		}
+	const handleSearch = useCallback(async (term: string) => {
+		setSearchTerm(term);
+		setCurrentPage(1); // Reset to first page on new search
+		const result = await fetchQuestions(term, 1, itemsPerPage);
+		setQuestions(result.questions);
+		setTotalCount(result.totalCount);
 	}, []);
 
-	React.useEffect(() => {
-		onSubmit({ search: "" });
-	}, [onSubmit]);
+	const handlePageChange = useCallback(
+		async (page: number) => {
+			setCurrentPage(page);
+			const result = await fetchQuestions(searchTerm, page, itemsPerPage);
+			setQuestions(result.questions);
+			setTotalCount(result.totalCount);
+		},
+		[searchTerm],
+	);
 
-	async function onquestionCreate(data: { questionName: string }) {
+	// Initial data load
+	React.useEffect(() => {
+		handleSearch("");
+	}, [handleSearch]);
+
+	async function onQuestionCreate(data: { questionName: string }) {
 		const res = await fetch("/api/admin/tests/questions", {
 			method: "POST",
 			body: JSON.stringify(data),
@@ -116,7 +107,7 @@ export default function Page() {
 		if (res.status === 200) {
 			const json = await res.json();
 			// Update questions array by adding the new question
-			setquestions((prevquestions) => [...prevquestions, json.data]);
+			setQuestions((prevQuestions) => [...prevQuestions, json.data]);
 			// Or refetch all questions
 			// onSubmit({ search: "" });
 			toast("question successfully created.");
@@ -128,43 +119,58 @@ export default function Page() {
 		}
 	}
 
-	const form = useForm<z.infer<typeof searchSchema>>({
-		defaultValues: {
-			search: "",
-		},
-	});
+	// Calculate total pages
+	const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
+
+	// Generate page numbers for pagination
+	const getPageNumbers = () => {
+		const pages = [];
+		const maxVisiblePages = 5;
+
+		if (totalPages <= maxVisiblePages) {
+			// Show all pages if there are few
+			for (let i = 1; i <= totalPages; i++) {
+				pages.push(i);
+			}
+		} else {
+			// Show a subset of pages with ellipsis
+			if (currentPage <= 3) {
+				// Near the start
+				for (let i = 1; i <= 4; i++) {
+					pages.push(i);
+				}
+				pages.push(-1); // Ellipsis
+				pages.push(totalPages);
+			} else if (currentPage >= totalPages - 2) {
+				// Near the end
+				pages.push(1);
+				pages.push(-1); // Ellipsis
+				for (let i = totalPages - 3; i <= totalPages; i++) {
+					pages.push(i);
+				}
+			} else {
+				// Middle
+				pages.push(1);
+				pages.push(-1); // Ellipsis
+				for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+					pages.push(i);
+				}
+				pages.push(-1); // Ellipsis
+				pages.push(totalPages);
+			}
+		}
+
+		return pages;
+	};
+
 	return (
 		<div className="flex flex-col items-center w-full my-6 space-y-6">
-			<div className="flex  w-full space-x-2 place-content-center">
-				<Form {...form}>
-					<form
-						onSubmit={form.handleSubmit(onSubmit)}
-						className="space-y-8 "
-					>
-						<div className="flex flex-row space-y-4">
-							<FormField
-								control={form.control}
-								name="search"
-								render={({ field }) => (
-									<FormItem>
-										<FormControl>
-											<Input
-												type="text"
-												placeholder="search question"
-												{...field}
-											/>
-										</FormControl>
-										<FormMessage />
-									</FormItem>
-								)}
-							/>
-							<Button type="submit">
-								<Search />
-								Search
-							</Button>
-						</div>
-					</form>
-				</Form>
+			<div className="flex w-full space-x-2 place-content-center">
+				<SearchForm
+					onSearch={handleSearch}
+					placeholder="search question"
+					schema={searchSchema}
+				/>
 
 				<Dialog>
 					<DialogTrigger asChild>
@@ -203,7 +209,7 @@ export default function Page() {
 										) as HTMLInputElement
 									)?.value;
 									if (inputValue) {
-										onquestionCreate({
+										onQuestionCreate({
 											questionName: inputValue,
 										});
 									}
@@ -322,6 +328,56 @@ export default function Page() {
 					)}
 				</TableBody>
 			</Table>
+
+			{totalPages > 1 && (
+				<Pagination>
+					<PaginationContent>
+						<PaginationItem>
+							<PaginationPrevious
+								onClick={() =>
+									currentPage > 1 &&
+									handlePageChange(currentPage - 1)
+								}
+								className={
+									currentPage === 1
+										? "pointer-events-none opacity-50"
+										: "cursor-pointer"
+								}
+							/>
+						</PaginationItem>
+
+						{getPageNumbers().map((page, index) => (
+							<PaginationItem key={index}>
+								{page === -1 ? (
+									<span className="px-4">...</span>
+								) : (
+									<PaginationLink
+										onClick={() => handlePageChange(page)}
+										isActive={page === currentPage}
+										className="cursor-pointer"
+									>
+										{page}
+									</PaginationLink>
+								)}
+							</PaginationItem>
+						))}
+
+						<PaginationItem>
+							<PaginationNext
+								onClick={() =>
+									currentPage < totalPages &&
+									handlePageChange(currentPage + 1)
+								}
+								className={
+									currentPage === totalPages
+										? "pointer-events-none opacity-50"
+										: "cursor-pointer"
+								}
+							/>
+						</PaginationItem>
+					</PaginationContent>
+				</Pagination>
+			)}
 		</div>
 	);
 }

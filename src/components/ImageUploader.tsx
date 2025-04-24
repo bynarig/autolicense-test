@@ -1,23 +1,40 @@
-import { useState, useRef } from "react";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+"use client";
+
+import React, { useRef, useState } from "react";
 import Image from "next/image";
-import { processImageFile } from "@/shared/lib/aws";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
 import { EditIcon } from "lucide-react";
+import imageUrl from "@/shared/lib/image-url";
 
 interface ImageUploaderProps {
 	initialImage?: string;
-	onImageSelect?: (file: File) => void;
+	onImageSelect: (file: File) => void;
+	width?: number;
+	height?: number;
+	className?: string;
 }
 
-export function ImageUploader({
+export const ImageUploader: React.FC<ImageUploaderProps> = ({
 	initialImage = "https://i.imgur.com/fXfpiBZ.jpeg",
 	onImageSelect,
-}: ImageUploaderProps) {
-	// State to store the selected image preview URL
-	const [imagePreview, setImagePreview] = useState(initialImage);
-	const [isHovering, setIsHovering] = useState(false);
+	width = 400,
+	height = 400,
+	className = "rounded-md object-cover",
+}) => {
+	// Convert path to full URL if it's a path (not a full URL or default image)
+	const getFullImageUrl = (imagePath: string): string => {
+		// Check if it's already a full URL (starts with http or https)
+		if (imagePath.startsWith("http")) {
+			return imagePath;
+		}
+		// Otherwise, assume it's a path and convert to full URL
+		return imageUrl.getImageUrl(imagePath);
+	};
+
+	const [imagePreview, setImagePreview] = useState<string>(
+		getFullImageUrl(initialImage),
+	);
+	const [isHovering, setIsHovering] = useState<boolean>(false);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 	const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,9 +48,7 @@ export function ImageUploader({
 			setSelectedFile(file);
 
 			// Pass the file to the parent component
-			if (onImageSelect) {
-				onImageSelect(file);
-			}
+			onImageSelect(file);
 		}
 	};
 
@@ -46,7 +61,6 @@ export function ImageUploader({
 
 	return (
 		<div className="grid w-full max-w-sm items-center gap-1.5">
-			{/* Display image preview with hover effect */}
 			<div
 				className="relative mb-4 cursor-pointer"
 				onMouseEnter={() => setIsHovering(true)}
@@ -56,12 +70,11 @@ export function ImageUploader({
 				<Image
 					src={imagePreview}
 					alt="Selected image preview"
-					width={400}
-					height={400}
-					className="rounded-md object-cover"
+					width={width}
+					height={height}
+					className={className}
 				/>
 
-				{/* Overlay with text on hover */}
 				{isHovering && (
 					<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-md">
 						<span className="text-white font-medium">
@@ -82,4 +95,6 @@ export function ImageUploader({
 			</div>
 		</div>
 	);
-}
+};
+
+export default ImageUploader;

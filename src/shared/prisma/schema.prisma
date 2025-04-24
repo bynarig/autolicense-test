@@ -35,6 +35,7 @@ model User {
 
   twoFactorEnabled Boolean @default(false)
   twoFactorSecret  String?
+  emailVerified    Boolean @default(false)
 
   subscriptionLVL       Int       @default(0)
   subscriptionType      String?
@@ -44,6 +45,11 @@ model User {
 
   test     Test[]
   Question Question[]
+
+  // Add indexes for frequently searched fields
+  @@index([name])
+  @@index([role])
+  @@index([createdAt])
 }
 
 enum Role {
@@ -76,6 +82,14 @@ model Test {
 
   authorId String @db.ObjectId
   author   User   @relation(fields: [authorId], references: [id])
+
+  // Add indexes for frequently searched fields
+  @@index([title])
+  @@index([category])
+  @@index([tags])
+  @@index([createdAt])
+  @@index([published])
+  @@index([authorId])
 }
 
 model Question {
@@ -97,6 +111,13 @@ model Question {
   author   User   @relation(fields: [authorId], references: [id])
 
   questionDiscussion QuestionDiscussion?
+
+  // Add indexes for frequently searched fields
+  @@index([title])
+  @@index([category])
+  @@index([type])
+  @@index([testId])
+  @@index([authorId])
 }
 
 model Answer {
@@ -108,6 +129,10 @@ model Answer {
 
   questionId String   @db.ObjectId
   question   Question @relation(fields: [questionId], references: [id])
+
+  // Add indexes for frequently searched fields
+  @@index([questionId])
+  @@index([isTrue])
 }
 
 type QuestionDiscussion {

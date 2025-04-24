@@ -1,162 +1,195 @@
 "use client";
-import {
-	AlertDialog,
-	AlertDialogAction,
-	AlertDialogCancel,
-	AlertDialogContent,
-	AlertDialogDescription,
-	AlertDialogFooter,
-	AlertDialogHeader,
-	AlertDialogTitle,
-	AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormLabel,
-	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { testValidationSchema } from "@/shared/lib/zod";
-import React, { useCallback, useState } from "react";
+
+import React, { Suspense, useCallback, useState } from "react";
 import { toast } from "sonner";
 import { redirect, useParams } from "next/navigation";
-import Image from "next/image";
-import {
-	Select,
-	SelectContent,
-	SelectGroup,
-	SelectItem,
-	SelectLabel,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { format } from "date-fns";
-import {
-	Popover,
-	PopoverContent,
-	PopoverTrigger,
-} from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { CalendarIcon } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
-import { ImageUploader } from "@/app/adminpanel/users/[id]/ImagePicker";
-import { processImageFile } from "@/shared/lib/aws";
+import { Skeleton } from "@/components/ui/skeleton";
+import { z } from "zod";
+import ImageUploader from "@/components/ImageUploader";
+import UserForm, { UserFormData } from "@/components/UserForm";
+import UserInfoDisplay from "@/components/UserInfoDisplay";
+import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog";
+
+// Define the validation schema for user data
+const userUpdateSchema = z.object({
+	name: z.string().min(1, "Name is required").optional(),
+	username: z.string().min(1, "Username is required").optional(),
+	email: z.string().email("Invalid email address").optional(),
+	role: z.string().min(1, "Role is required").optional(),
+	password: z.string().optional(),
+	adminPassword: z.string().optional(),
+	subscriptionExpiresAt: z.date().optional(),
+	avatarUrl: z.string().optional(),
+	subscriptionLVL: z.string().optional(),
+	subscriptionType: z.string().optional(),
+	emailVerified: z.boolean().optional(),
+});
 
 export default function Page() {
 	const params = useParams();
-	const [userData, setuserData] = useState<any>(null);
-
+	const [userData, setUserData] = useState<any>(null);
 	const [selectedImageFile, setSelectedImageFile] = useState<File | null>(
 		null,
 	);
-	const [avatarUrl, setAvatarUrl] = useState<string | null>(
-		userData?.avatarUrl || null,
-	);
+	const [originalData, setOriginalData] = useState<UserFormData | null>(null);
 
-	// Handle image selection
+	// Handle image selection from ImageUploader component
 	const handleImageSelect = (file: File) => {
 		setSelectedImageFile(file);
 	};
 
-	// Modify your form submission function
-	async function onUpdateUserData(data: {
-		email: string;
-		password: string;
-		subscriptionExpiresAt: any;
-		role: string;
-		name: string;
-		username: string;
-	}) {
-		// If there's a selected image file, upload it first
-		if (selectedImageFile) {
-			try {
-				toast.info("Uploading image...");
-				const imgurUrl = await processImageFile(selectedImageFile);
-				if (imgurUrl) {
-					setAvatarUrl(imgurUrl);
-					data = { ...data };
-					toast.success("Image uploaded successfully");
-				} else {
-					toast.error("Failed to upload image");
+	// Handle form submission
+	async function handleFormSubmit(data: UserFormData) {
+		try {
+			// Validate the data with Zod
+			userUpdateSchema.parse(data);
+
+			// Create an object to store only the changed fields
+			const changedFields: Partial<UserFormData> = {};
+
+			// Compare with original data and only include changed fields
+			if (originalData) {
+				if (data.name !== originalData.name)
+					changedFields.name = data.name;
+				if (data.username !== originalData.username)
+					changedFields.username = data.username;
+				if (data.email !== originalData.email)
+					changedFields.email = data.email;
+				if (data.role !== originalData.role)
+					changedFields.role = data.role;
+
+				// Handle password change with admin password verification
+				if (data.password) {
+					if (!data.adminPassword) {
+						toast.error(
+							"Admin password is required to change user's password",
+						);
+						return;
+					}
+					changedFields.password = data.password;
+					changedFields.adminPassword = data.adminPassword;
 				}
-			} catch (error) {
-				console.error("Error uploading image:", error);
-				toast.error("Error uploading image");
+
+				// Compare dates properly
+				const originalDate = originalData.subscriptionExpiresAt
+					? new Date(originalData.subscriptionExpiresAt).toISOString()
+					: null;
+				const newDate = data.subscriptionExpiresAt
+					? new Date(data.subscriptionExpiresAt).toISOString()
+					: null;
+				if (originalDate !== newDate)
+					changedFields.subscriptionExpiresAt =
+						data.subscriptionExpiresAt;
+
+				// Compare new fields
+				if (data.subscriptionLVL !== originalData.subscriptionLVL)
+					changedFields.subscriptionLVL = data.subscriptionLVL;
+				if (data.subscriptionType !== originalData.subscriptionType)
+					changedFields.subscriptionType = data.subscriptionType;
+				if (data.emailVerified !== originalData.emailVerified)
+					changedFields.emailVerified = data.emailVerified;
 			}
-		}
 
-		// Continue with the user data update
-		const id = params.id;
-		const res = await fetch(`/api/admin/users/${id}`, {
-			method: "POST",
-			body: JSON.stringify(data),
-			headers: { "Content-Type": "application/json" },
-		});
+			// If there's a selected image file, upload it first
+			if (selectedImageFile) {
+				try {
+					toast.info("Uploading image...");
 
-		if (res.status === 200) {
-			const json = await res.json();
-			toast(`User id:${id} edited.`);
-		} else {
-			const json = await res.json();
-			toast(
-				`Failed to edit user. err code: ${res.status} errmsg: ${json.error}`,
-			);
+					const formData = new FormData();
+					formData.append("file", selectedImageFile);
+
+					const uploadResponse = await fetch("/api/storage/upload", {
+						method: "POST",
+						body: formData,
+					});
+
+					if (uploadResponse.ok) {
+						const { path, url } = await uploadResponse.json();
+						// Store only the path in the database, not the full URL
+						changedFields.avatarUrl = path;
+						toast.success("Image uploaded successfully");
+					} else {
+						toast.error(
+							`Failed to upload image, err: ${uploadResponse.status}`,
+						);
+					}
+				} catch (error) {
+					console.error("Error uploading image:", error);
+					toast.error("Error uploading image");
+				}
+			}
+
+			// Only proceed if there are changes to submit
+			if (Object.keys(changedFields).length === 0) {
+				toast.info("No changes detected");
+				return;
+			}
+
+			const res = await fetch(`/api/admin/users/${params.id}`, {
+				method: "POST",
+				body: JSON.stringify(changedFields),
+				headers: { "Content-Type": "application/json" },
+			});
+
+			if (res.status === 200) {
+				const updatedData = await res.json();
+				setUserData(updatedData.data);
+				setOriginalData({
+					name: updatedData.data.name,
+					username: updatedData.data.username,
+					email: updatedData.data.email,
+					role: updatedData.data.role,
+					subscriptionExpiresAt: updatedData.data
+						.subscriptionExpiresAt
+						? new Date(updatedData.data.subscriptionExpiresAt)
+						: undefined,
+					avatarUrl: updatedData.data.avatarUrl,
+					subscriptionLVL: updatedData.data.subscriptionLVL,
+					subscriptionType: updatedData.data.subscriptionType,
+					emailVerified: updatedData.data.emailVerified,
+				});
+				toast.success(`User id:${params.id} edited.`);
+			} else {
+				const json = await res.json();
+				toast.error(
+					`Failed to edit user. err code: ${res.status} errmsg: ${json.error}`,
+				);
+			}
+		} catch (error) {
+			if (error instanceof z.ZodError) {
+				// Handle validation errors
+				const errorMessages = error.errors
+					.map((err) => `${err.path.join(".")}: ${err.message}`)
+					.join(", ");
+				toast.error(`Validation error: ${errorMessages}`);
+			} else {
+				console.error("Error submitting form:", error);
+				toast.error("An unexpected error occurred");
+			}
 		}
 	}
 
-	async function onuserDelete() {
+	// Handle user deletion
+	async function handleUserDelete() {
 		const id = params.id;
 		const res = await fetch(`/api/admin/users/${id}`, {
 			method: "DELETE",
 			headers: { "Content-Type": "application/json" },
 		});
 		if (res.status === 200) {
-			const json = await res.json();
+			await res.json();
+			toast.success(`User id:${id} deleted.`);
 			redirect("/adminpanel/users");
-			// setuserData(json.data);
-			toast(`user id:${id} deleted.`);
 		} else {
-			// setuserData([]);
 			const json = await res.json();
-			toast(
+			toast.error(
 				`Failed to delete user. err code: ${res.status} errmsg: ${json.error}`,
 			);
 		}
 	}
 
-	const form = useForm<z.infer<typeof testValidationSchema>>({
-		defaultValues: {
-			name: "",
-			username: "",
-			email: "",
-			role: "",
-			password: "",
-			avatarUrl: "",
-			subscriptionExpiresAt: new Date("1900-01-01"),
-		},
-	});
-
-	React.useEffect(() => {
-		if (userData) {
-			form.reset({
-				name: userData.name || "",
-				username: userData.username || "",
-				email: userData.email || "",
-				role: userData.role || "",
-				password: "",
-				subscriptionExpiresAt:
-					userData?.subscriptionExpiresAt || new Date("1900-01-01"),
-			});
-		}
-	}, [userData, form]);
-
-	const getuserData = useCallback(async () => {
+	// Fetch user data
+	const getUserData = useCallback(async () => {
 		const id = params.id;
 		const res = await fetch(`/api/admin/users/${id}`, {
 			method: "GET",
@@ -164,276 +197,105 @@ export default function Page() {
 		});
 		if (res.status === 200) {
 			const json = await res.json();
-			setuserData(json.data);
-			toast(`user id:${id} fetched.`);
+			setUserData(json.data);
+
+			// Store the original data for comparison when detecting changes
+			setOriginalData({
+				name: json.data.name,
+				username: json.data.username,
+				email: json.data.email,
+				role: json.data.role,
+				subscriptionExpiresAt: json.data.subscriptionExpiresAt
+					? new Date(json.data.subscriptionExpiresAt)
+					: undefined,
+				avatarUrl: json.data.avatarUrl,
+				subscriptionLVL: json.data.subscriptionLVL,
+				subscriptionType: json.data.subscriptionType,
+				emailVerified: json.data.emailVerified,
+			});
+
+			toast.success(`User id:${id} fetched.`);
 		} else {
-			setuserData([]);
 			const json = await res.json();
-			toast(
+			toast.error(
 				`Failed to get user. err code: ${res.status} errmsg: ${json.error}`,
 			);
 		}
 	}, [params.id]);
 
 	React.useEffect(() => {
-		getuserData();
-	}, [getuserData]);
+		getUserData().then();
+	}, [getUserData]);
 
 	return (
 		<>
-			<div className="flex flex-col md:flex-row justify-between w-full">
-				<div className="flex flex-col justify-left w-full mt-[20px]">
-					<h1 className="text-2xl font-bold">
-						user ID: {userData?.id}
-					</h1>
-					<Form {...form}>
-						<form
-							onSubmit={form.handleSubmit(onUpdateUserData)}
-							className="space-y-2 "
-						>
-							<div className="flex ">
-								<FormField
-									control={form.control}
-									name="name"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>name</FormLabel>
-											<FormControl>
-												<Input
-													type="text"
-													placeholder="name"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-							<div className="flex ">
-								<FormField
-									control={form.control}
-									name="username"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>username</FormLabel>
-											<FormControl>
-												<Input
-													type="text"
-													placeholder="username"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-							<div className="flex ">
-								<FormField
-									control={form.control}
-									name="email"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>email</FormLabel>
-											<FormControl>
-												<Input
-													type="text"
-													placeholder="email"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-							<div className="flex ">
-								<FormField
-									control={form.control}
-									name="role"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>role</FormLabel>
-											<Select
-												onValueChange={field.onChange}
-												defaultValue={field.value}
-											>
-												<FormControl>
-													<SelectTrigger>
-														<SelectValue
-															placeholder={
-																userData?.role
-															}
-														/>
-													</SelectTrigger>
-												</FormControl>
-												<SelectContent>
-													<SelectItem value="UNAPPROVED">
-														UNAPPROVED
-													</SelectItem>
-													<SelectItem value="USER">
-														USER
-													</SelectItem>
-													<SelectItem value="ADMIN">
-														ADMIN
-													</SelectItem>
-												</SelectContent>
-											</Select>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-							<div className="flex ">
-								<FormField
-									control={form.control}
-									name="password"
-									render={({ field }) => (
-										<FormItem>
-											<FormLabel>password</FormLabel>
-											<FormControl>
-												<Input
-													type="text"
-													placeholder="set new password"
-													{...field}
-												/>
-											</FormControl>
-											<FormMessage />
-										</FormItem>
-									)}
-								/>
-							</div>
-							<FormField
-								control={form.control}
-								name="subscriptionExpiresAt"
-								render={({ field }) => (
-									<FormItem className="flex flex-col">
-										<FormLabel>
-											subscriptionExpiresAt
-										</FormLabel>
-										<Popover>
-											<PopoverTrigger asChild>
-												<FormControl>
-													<Button
-														variant={"outline"}
-														className={cn(
-															"w-[240px] pl-3 text-left font-normal",
-															!field.value &&
-																"text-muted-foreground",
-														)}
-													>
-														{field.value ? (
-															format(
-																field.value,
-																"PPP",
-															)
-														) : (
-															<span>
-																{userData?.subscriptionExpiresAt ||
-																	"no subscruption"}
-															</span>
-														)}
-														<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-													</Button>
-												</FormControl>
-											</PopoverTrigger>
-											<PopoverContent
-												className="w-auto p-0"
-												align="start"
-											>
-												<Calendar
-													mode="single"
-													selected={field.value}
-													onSelect={field.onChange}
-													// disabled={(date) =>
-													// 	date > new Date() ||
-													// 	date <
-													// 		new Date(
-													// 			"1900-01-01",
-													// 		)
-													// }
-													initialFocus
-												/>
-											</PopoverContent>
-										</Popover>
-										<FormMessage />
-									</FormItem>
-								)}
+			{!userData ? (
+				<Suspense
+					fallback={
+						<div>
+							<Skeleton />
+						</div>
+					}
+				></Suspense>
+			) : (
+				<div className="flex flex-col md:flex-row justify-between w-full">
+					<div className="flex flex-col justify-left w-full mt-[20px]">
+						<h1 className="text-2xl font-bold">
+							User ID: {userData?.id}
+						</h1>
+
+						{/* User Form Component */}
+						<UserForm
+							initialData={{
+								name: userData.name,
+								username: userData.username,
+								email: userData.email,
+								role: userData.role,
+								subscriptionExpiresAt:
+									userData.subscriptionExpiresAt
+										? new Date(
+												userData.subscriptionExpiresAt,
+											)
+										: undefined,
+								avatarUrl: userData.avatarUrl,
+								subscriptionLVL: userData.subscriptionLVL,
+								subscriptionType: userData.subscriptionType,
+								emailVerified: userData.emailVerified,
+							}}
+							onSubmit={handleFormSubmit}
+						/>
+
+						{/* Read-only User Information */}
+						<div className="mt-4">
+							<UserInfoDisplay userData={userData} />
+						</div>
+
+						{/* Delete User Dialog */}
+						<div className="mt-4">
+							<DeleteConfirmationDialog
+								title="Are you absolutely sure?"
+								description="This action cannot be undone. This will delete this user data without any previous backups."
+								triggerText="Delete User"
+								onConfirm={handleUserDelete}
+								variant="outline"
 							/>
+						</div>
+					</div>
 
-							<Button type="submit">Update user data</Button>
-
-							<p className="text-2xl md:mb-[10px]">
-								subscriptionLVL: {userData?.subscriptionLVL}
-							</p>
-							<p className="text-2xl md:mb-[10px]">
-								subscriptionType:{" "}
-								{userData?.subscriptionType ||
-									"no subscription"}
-							</p>
-							<p className="text-2xl md:mb-[10px]">
-								subscriptionExpiresAt:{" "}
-								{userData?.subscriptionExpiresAt ||
-									"no subscription"}
-							</p>
-							<p className="text-2xl md:mb-[10px]">
-								Email verified:{" "}
-								{userData?.emailVerified ? "true" : "false"}
-							</p>
-
-							<AlertDialog>
-								<AlertDialogTrigger asChild>
-									<Button variant="outline">
-										Delete user
-									</Button>
-								</AlertDialogTrigger>
-								<AlertDialogContent>
-									<AlertDialogHeader>
-										<AlertDialogTitle>
-											Are you absolutely sure?
-										</AlertDialogTitle>
-										<AlertDialogDescription>
-											This action cannot be undone. This
-											will delete this user data without
-											any previous backups
-										</AlertDialogDescription>
-									</AlertDialogHeader>
-									<AlertDialogFooter>
-										<AlertDialogCancel>
-											Cancel
-										</AlertDialogCancel>
-										<AlertDialogAction
-											onClick={() => onuserDelete()}
-										>
-											Delete
-										</AlertDialogAction>
-									</AlertDialogFooter>
-								</AlertDialogContent>
-							</AlertDialog>
-						</form>
-					</Form>
-					<div></div>
+					<div className="flex flex-col place-content-right w-full mt-[20px]">
+						{/* Image Uploader Component */}
+						<ImageUploader
+							initialImage={
+								userData.avatarUrl ||
+								"https://i.imgur.com/fXfpiBZ.jpeg"
+							}
+							onImageSelect={handleImageSelect}
+							width={400}
+							height={400}
+						/>
+					</div>
 				</div>
-				<div className="flex flex-col place-content-right w-full mt-[20px]">
-					<ImageUploader
-						initialImage={
-							userData?.avatarUrl ||
-							"https://i.imgur.com/fXfpiBZ.jpeg"
-						}
-						onImageSelect={handleImageSelect}
-					/>
-					<p className="text-2xl md:mb-[10px]">
-						Created At: {userData?.createdAt}
-					</p>
-					<p className="text-2xl md:mb-[10px]">
-						lastLogin: {userData?.lastLogin || userData?.createdAt}
-					</p>
-					<p className="text-2xl md:mb-[10px]">
-						Edited At: {userData?.editedAt || "never"}
-					</p>
-				</div>
-			</div>
+			)}
 		</>
 	);
 }

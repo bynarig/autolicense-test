@@ -1,13 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "../globals.css";
-import { SessionProvider } from "next-auth/react";
+import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
-import AdminStrict from "@/components/admin-strict";
-import { ModeToggle } from "@/shared/ui/ModeToggle";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -33,8 +28,8 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-	title: "Admin Panel | LII",
-	description: "Make your life in Ireland easier with our admin tools",
+	title: "Life in Ireland",
+	description: "Make your life in Ireland easier",
 };
 
 export default function RootLayout({
@@ -53,20 +48,8 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<SessionProvider>
-						<AdminStrict />
-						<SidebarProvider>
-							<AppSidebar />
-							<SidebarTrigger />
-							<div className="fixed top-4 right-4 z-50">
-								<ModeToggle />
-							</div>
-							<main className='w-full'>
-								{children}
-							</main>
-						</SidebarProvider>
-						<Toaster />
-					</SessionProvider>
+					{children}
+					<Toaster />
 				</ThemeProvider>
 			</body>
 		</html>

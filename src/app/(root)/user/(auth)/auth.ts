@@ -47,6 +47,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			if (user) {
 				token.id = user.id;
 				token.role = user.role;
+				token.avatarUrl = user.avatarUrl;
 			}
 			return token;
 		},
@@ -55,6 +56,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				session.user.id = token.id as string;
 			}
 			if (token?.role) session.user.role = token.role as string;
+			if (token?.avatarUrl) {
+				// Store the path in the session, the Navbar component will convert it to a full URL
+				session.user.avatarUrl = token.avatarUrl as string;
+			}
 
 			return session;
 		},

@@ -18,6 +18,11 @@ const nextConfig: NextConfig = {
 				hostname: "i.imgur.com",
 				pathname: "/**",
 			},
+			{
+				protocol: "https",
+				hostname: "ireland-faq-storage.b-cdn.net",
+				pathname: "/**",
+			},
 		],
 	},
 };

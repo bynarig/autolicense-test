@@ -5,42 +5,85 @@ import { prisma } from "@/shared/lib/db";
 
 export async function POST(req: NextRequest) {
 	try {
-		const { input, inputType } = await req.json();
+		const { data, inputType, pagination } = await req.json();
+		const input = data?.search || "";
 
-		let response = undefined;
+		// Default pagination values
+		const page = pagination?.page || 1;
+		const limit = pagination?.limit || 10;
+		const skip = (page - 1) * limit;
+
+		// Build the where clause based on input type
+		let whereClause: any = {};
 		switch (inputType) {
 			case "email":
-				response = await prisma.user.findMany({
-					where: { email: input as string },
-				});
+				whereClause = {
+					email: {
+						contains: input,
+						mode: "insensitive", // Case-insensitive search
+					},
+				};
 				break;
 			case "name":
-				response = await prisma.user.findMany({
-					where: { name: input as string },
-				});
+				whereClause = {
+					name: {
+						contains: input,
+						mode: "insensitive", // Case-insensitive search
+					},
+				};
 				break;
 			case "id":
-				response = await prisma.user.findMany({
-					where: { id: input as string },
-				});
+				// For ID, we still use exact match
+				whereClause = { id: input };
 				break;
 			case "role":
-				response = await prisma.user.findMany({
-					where: { role: input.toUpperCase() as any },
-				});
+				whereClause = {
+					role: {
+						equals: input.toUpperCase() as any,
+					},
+				};
 				break;
 			default:
-				return NextResponse.json(
-					{ error: "Invalid inputType" },
-					{ status: 400 },
-				);
+				// If input type is not specified or invalid, search across multiple fields
+				whereClause = {
+					OR: [
+						{ name: { contains: input, mode: "insensitive" } },
+						{ email: { contains: input, mode: "insensitive" } },
+						{ id: input.length === 24 ? input : undefined },
+					],
+				};
 		}
 
+		// Get total count for pagination
+		const totalCount = await prisma.user.count({
+			where: whereClause,
+		});
+
+		// Get paginated results
+		const users = await prisma.user.findMany({
+			where: whereClause,
+			skip,
+			take: limit,
+			orderBy: {
+				createdAt: "desc", // Most recent users first
+			},
+		});
+
 		return NextResponse.json(
-			{ success: true, data: response },
+			{
+				success: true,
+				data: users,
+				totalCount,
+				pagination: {
+					page,
+					limit,
+					totalPages: Math.ceil(totalCount / limit),
+				},
+			},
 			{ status: 200 },
 		);
 	} catch (error) {
+		console.error("Search error:", error);
 		return NextResponse.json(
 			{ error: "Invalid request", detail: (error as Error).message },
 			{ status: 400 },

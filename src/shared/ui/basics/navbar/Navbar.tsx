@@ -28,6 +28,7 @@ import { useSession } from "next-auth/react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { clientSignOut } from "@/app/(root)/user/(auth)/auth-actions";
 import { Button } from "@/components/ui/button";
+import imageUrl from "@/shared/lib/image-url";
 // import {ModeToggle} from "@/shared/ui/ModeToggle";
 
 export default function Navbar() {
@@ -119,7 +120,13 @@ export default function Navbar() {
 					<DropdownMenuTrigger className="md:mr-[15px] md:mt-[5px] md:mb-[5px]">
 						<Avatar>
 							<AvatarImage
-								src="https://github.com/shadcn.png"
+								src={
+									session?.user?.avatarUrl
+										? imageUrl.getImageUrl(
+												session.user.avatarUrl,
+											)
+										: "https://avatars.githubusercontent.com/u/124599?v=4"
+								}
 								alt="@shadcn"
 							/>
 							<AvatarFallback>CN</AvatarFallback>
