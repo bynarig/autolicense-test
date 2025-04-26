@@ -1,9 +1,9 @@
 "use server";
 
 import { signIn } from "@/app/(root)/user/(auth)/auth";
-import { prisma } from "@/shared/lib/db";
+import { prisma } from "@/lib/db";
 import { Prisma } from "@prisma/client";
-import Bcrypt from "@/shared/lib/bcrypt";
+import Bcrypt from "@/lib/bcrypt";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {

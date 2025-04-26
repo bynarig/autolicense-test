@@ -27,11 +27,9 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<Head>
-				<link rel="icon" type="image/png" href="/favicon.png" />
-			</Head>
-			<body
+		 <>
+
+			<div
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<ThemeProvider
@@ -45,7 +43,7 @@ export default function RootLayout({
 						<Toaster />
 					</SessionProvider>
 				</ThemeProvider>
-			</body>
-		</html>
+			</div>
+		</>
 	);
 }

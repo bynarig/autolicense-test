@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { testValidationSchema } from "@/shared/lib/zod";
+import { testValidationSchema } from "@/lib/zod";
 import { clientSignIn } from "@/app/(root)/user/(auth)/auth-actions";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";

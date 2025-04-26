@@ -4,7 +4,7 @@ import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import Image from "next/image";
 
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 
 function Avatar({
 	className,
@@ -39,26 +39,23 @@ function AvatarImage({
 		(src.startsWith("http://") || src.startsWith("https://"));
 
 	return (
-		<AvatarPrimitive.Image
-			data-slot="avatar-image"
-			className={cn("aspect-square size-full", className)}
-			{...props}
-			asChild={isRemoteUrl}
-		>
-			{isRemoteUrl ? (
-				<Image
-					src={src as string}
-					alt={alt}
-					width={width}
-					height={height}
-					priority={true}
-					className={cn(
-						"aspect-square size-full object-cover",
-						className,
-					)}
-				/>
-			) : null}
-		</AvatarPrimitive.Image>
+		// <AvatarPrimitive.Image
+		// 	data-slot="avatar-image"
+		// 	className={cn("aspect-square size-full", className)}
+		// 	{...props}
+		// 	asChild={isRemoteUrl}
+		// >
+		// 	{isRemoteUrl ? (
+		<Image
+			src={src as string}
+			alt={alt}
+			width={width}
+			height={height}
+			priority={true}
+			className={cn("aspect-square size-full object-cover", className)}
+		/>
+		// 	) : null}
+		// </AvatarPrimitive.Image>
 	);
 }
 

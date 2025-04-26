@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useCallback, useState, useEffect } from "react";
-import { searchSchema } from "@/shared/lib/zod";
+import { searchSchema } from "@/lib/zod";
 import { SearchForm } from "@/components/SearchForm";
 import { UsersTable } from "@/components/UsersTable";
 import { fetchUsers } from "@/services/userService";

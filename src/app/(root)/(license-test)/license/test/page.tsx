@@ -1,8 +1,8 @@
 "use client";
 
-import Navbar from "@/shared/ui/basics/navbar/Navbar";
-import Footer from "@/shared/ui/basics/Footer";
-import TestCard from "@/shared/ui/testing/TestCard";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import TestCard from "@/components/TestCard";
 
 export default function Page() {
 	return (

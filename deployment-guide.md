@@ -13,91 +13,104 @@ This guide explains how to deploy the Next.js application using Nginx as a rever
 ## Building the Next.js Application
 
 1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd autolicense-test
-   ```
+
+    ```bash
+    git clone <repository-url>
+    cd autolicense-test
+    ```
 
 2. Install dependencies:
-   ```bash
-   pnpm install
-   ```
+
+    ```bash
+    pnpm install
+    ```
 
 3. Build the application:
-   ```bash
-   pnpm build
-   ```
+
+    ```bash
+    pnpm build
+    ```
 
 4. Start the application in production mode:
-   ```bash
-   pnpm start
-   ```
 
-   This will start the Next.js server on port 3000 by default.
+    ```bash
+    pnpm start
+    ```
+
+    This will start the Next.js server on port 3000 by default.
 
 5. (Optional) To keep the application running after you close the terminal, use a process manager like PM2:
-   ```bash
-   # Install PM2
-   npm install -g pm2
 
-   # Start the application with PM2
-   pm2 start npm --name "autolicense-test" -- start
+    ```bash
+    # Install PM2
+    npm install -g pm2
 
-   # Set PM2 to start on system boot
-   pm2 startup
-   pm2 save
-   ```
+    # Start the application with PM2
+    pm2 start npm --name "autolicense-test" -- start
+
+    # Set PM2 to start on system boot
+    pm2 startup
+    pm2 save
+    ```
 
 ## Setting Up Nginx
 
 ### Production Setup
 
 1. Install Nginx:
-   ```bash
-   sudo apt update
-   sudo apt install nginx
-   ```
+
+    ```bash
+    sudo apt update
+    sudo apt install nginx
+    ```
 
 2. Create a directory for your SSL certificates:
-   ```bash
-   sudo mkdir -p /etc/nginx/ssl
-   ```
+
+    ```bash
+    sudo mkdir -p /etc/nginx/ssl
+    ```
 
 3. Copy your SSL certificates to the directory:
-   ```bash
-   sudo cp your-certificate.crt /etc/nginx/ssl/example.com.crt
-   sudo cp your-private-key.key /etc/nginx/ssl/example.com.key
-   ```
+
+    ```bash
+    sudo cp your-certificate.crt /etc/nginx/ssl/example.com.crt
+    sudo cp your-private-key.key /etc/nginx/ssl/example.com.key
+    ```
 
 4. Copy the Nginx configuration file:
-   ```bash
-   sudo cp nginx.conf /etc/nginx/sites-available/autolicense-test
-   ```
+
+    ```bash
+    sudo cp nginx.conf /etc/nginx/sites-available/autolicense-test
+    ```
 
 5. Edit the configuration file to update the domain name and paths:
-   ```bash
-   sudo nano /etc/nginx/sites-available/autolicense-test
-   ```
 
-   Update the following:
-   - Replace `example.com` with your actual domain name
-   - Update the SSL certificate paths if necessary
-   - Adjust the root directory path to match your server setup
+    ```bash
+    sudo nano /etc/nginx/sites-available/autolicense-test
+    ```
+
+    Update the following:
+
+    - Replace `example.com` with your actual domain name
+    - Update the SSL certificate paths if necessary
+    - Adjust the root directory path to match your server setup
 
 6. Create a symbolic link to enable the site:
-   ```bash
-   sudo ln -s /etc/nginx/sites-available/autolicense-test /etc/nginx/sites-enabled/
-   ```
+
+    ```bash
+    sudo ln -s /etc/nginx/sites-available/autolicense-test /etc/nginx/sites-enabled/
+    ```
 
 7. Test the Nginx configuration:
-   ```bash
-   sudo nginx -t
-   ```
+
+    ```bash
+    sudo nginx -t
+    ```
 
 8. If the test is successful, restart Nginx:
-   ```bash
-   sudo systemctl restart nginx
-   ```
+    ```bash
+    sudo systemctl restart nginx
+    ```
 
 ## Directory Structure
 
@@ -117,6 +130,7 @@ Ensure your production directory structure looks like this:
 ### 502 Bad Gateway
 
 If you see a 502 Bad Gateway error:
+
 - Check if the Next.js application is running on port 3000
 - Verify that Nginx can connect to the application
 - Check Nginx error logs: `sudo tail -f /var/log/nginx/error.log`
@@ -124,6 +138,7 @@ If you see a 502 Bad Gateway error:
 ### SSL Issues
 
 If you have SSL-related issues:
+
 - Verify that your SSL certificates are valid and correctly installed
 - Check that the paths in the Nginx configuration match the actual certificate locations
 - Ensure the certificate files have the correct permissions
@@ -131,6 +146,7 @@ If you have SSL-related issues:
 ### Static Assets Not Loading
 
 If static assets are not loading:
+
 - Check the paths in the Nginx configuration
 - Verify that the `.next/static` directory exists and is accessible
 - Check for any path-related errors in the browser console

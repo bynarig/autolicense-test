@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { EditIcon } from "lucide-react";
-import imageUrl from "@/shared/lib/image-url";
+import imageUrl from "@/lib/image-url";
 
 interface ImageUploaderProps {
 	initialImage?: string;
@@ -36,16 +36,51 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 	);
 	const [isHovering, setIsHovering] = useState<boolean>(false);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+	const [imageError, setImageError] = useState<boolean>(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+	const objectUrlRef = useRef<string | null>(null);
+
+	// Reset state when initialImage changes
+	useEffect(() => {
+		// Clean up previous object URL if it exists
+		if (objectUrlRef.current) {
+			URL.revokeObjectURL(objectUrlRef.current);
+			objectUrlRef.current = null;
+		}
+
+		// Reset selected file
+		setSelectedFile(null);
+
+		// Reset image preview to the new initialImage
+		setImagePreview(getFullImageUrl(initialImage));
+		setImageError(false);
+	}, [initialImage]);
+
+	// Clean up object URL when component unmounts
+	useEffect(() => {
+		return () => {
+			if (objectUrlRef.current) {
+				URL.revokeObjectURL(objectUrlRef.current);
+				objectUrlRef.current = null;
+			}
+		};
+	}, []);
 
 	// Handle file selection
 	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file && file.type.startsWith("image/")) {
+			// Clean up previous object URL if it exists
+			if (objectUrlRef.current) {
+				URL.revokeObjectURL(objectUrlRef.current);
+			}
+
 			// Create a URL for the selected image for preview
 			const previewUrl = URL.createObjectURL(file);
+			objectUrlRef.current = previewUrl;
 			setImagePreview(previewUrl);
 			setSelectedFile(file);
+			setImageError(false);
 
 			// Pass the file to the parent component
 			onImageSelect(file);
@@ -67,13 +102,25 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 				onMouseLeave={() => setIsHovering(false)}
 				onClick={handleImageClick}
 			>
-				<Image
-					src={imagePreview}
-					alt="Selected image preview"
-					width={width}
-					height={height}
-					className={className}
-				/>
+				{imageError ? (
+					<div
+						className={`flex items-center justify-center bg-gray-200 ${className}`}
+						style={{ width, height }}
+					>
+						<span className="text-gray-500">
+							Image not available
+						</span>
+					</div>
+				) : (
+					<Image
+						src={imagePreview}
+						alt="Selected image preview"
+						width={width}
+						height={height}
+						className={className}
+						onError={() => setImageError(true)}
+					/>
+				)}
 
 				{isHovering && (
 					<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-md">

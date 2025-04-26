@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { prisma } from "@/shared/lib/db";
+import { prisma } from "@/lib/db";
 import { UsersClient } from "@/components/UsersClient";
 
 // export const metadata: Metadata = {

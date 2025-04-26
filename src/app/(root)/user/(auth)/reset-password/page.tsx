@@ -1,7 +1,7 @@
 "use client";
 
-import Navbar from "@/shared/ui/basics/navbar/Navbar";
-import Footer from "@/shared/ui/basics/Footer";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export default function Page() {
 	return (

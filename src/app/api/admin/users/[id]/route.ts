@@ -1,11 +1,11 @@
 "use server";
 
 import { NextResponse } from "next/server";
-import { prisma } from "@/shared/lib/db";
-import { isAdmin } from "@/features/role-check";
+import { prisma } from "@/lib/db";
+import { isAdmin } from "@/lib/role-check";
 import { auth } from "@/app/(root)/user/(auth)/auth";
-import Bcrypt from "@/shared/lib/bcrypt";
-import { deleteImage } from "@/shared/lib/image-service";
+import Bcrypt from "@/lib/bcrypt";
+import { deleteImage } from "@/services/image-service";
 
 type tParams = Promise<{ id: string }>;
 
@@ -163,13 +163,7 @@ export async function POST(req: Request, { params }: { params: tParams }) {
 						// With the new approach, avatarUrl is already just the path
 						// No need to extract it from a full URL
 						await deleteImage(currentUser.avatarUrl);
-						console.log(
-							`Deleted old avatar: ${currentUser.avatarUrl}`,
-						);
-					} catch (error) {
-						console.error("Error deleting old avatar:", error);
-						// Continue with the update even if deletion fails
-					}
+					} catch (error) {}
 				}
 
 				updateData.avatarUrl = avatarUrl;

@@ -13,7 +13,7 @@ import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { searchSchema } from "@/shared/lib/zod";
+import { searchSchema } from "@/lib/zod";
 import {
 	Table,
 	TableBody,

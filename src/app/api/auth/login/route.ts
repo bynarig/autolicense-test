@@ -2,8 +2,8 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { signIn } from "@/app/(root)/user/(auth)/auth";
-import { prisma } from "@/shared/lib/db";
-import Bcrypt from "@/shared/lib/bcrypt";
+import { prisma } from "@/lib/db";
+import Bcrypt from "@/lib/bcrypt";
 
 export async function POST(req: NextRequest) {
 	try {

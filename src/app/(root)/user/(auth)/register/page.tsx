@@ -1,7 +1,7 @@
 "use client";
 
-import Navbar from "@/shared/ui/basics/navbar/Navbar";
-import Footer from "@/shared/ui/basics/Footer";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "@/shared/lib/zod";
+import { formSchema } from "@/lib/zod";
 import {
 	clientRegister,
 	clientSignIn,

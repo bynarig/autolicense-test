@@ -1,9 +1,9 @@
 "use server";
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/shared/lib/db";
+import { prisma } from "@/lib/db";
 import { auth } from "@/app/(root)/user/(auth)/auth";
-import { isAdmin } from "@/features/role-check";
+import { isAdmin } from "@/lib/role-check";
 
 export async function POST(req: NextRequest) {
 	try {

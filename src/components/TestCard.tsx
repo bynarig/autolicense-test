@@ -5,10 +5,10 @@ export default function TestCard() {
 		<>
 			<div className="card bg-base-100 w-140 shadow-sm">
 				<figure>
-					<Image
-						src="https://www.tintmyridedenver.com/wp-content/uploads/denver-auto-show.jpg"
-						alt="Shoes"
-					/>
+					{/*<Image*/}
+					{/*	src="https://www.tintmyridedenver.com/wp-content/uploads/denver-auto-show.jpg"*/}
+					{/*	alt="Shoes"*/}
+					{/*/>*/}
 				</figure>
 				<div className="card-body">
 					<div className="flex justify-between">

@@ -1,5 +1,5 @@
-import Navbar from "@/shared/ui/basics/navbar/Navbar";
-import Footer from "@/shared/ui/basics/Footer";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import Link from "next/link";
 
 export default function Page() {

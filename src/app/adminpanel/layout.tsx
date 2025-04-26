@@ -7,7 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import AdminStrict from "@/components/admin-strict";
-import { ModeToggle } from "@/shared/ui/ModeToggle";
+import { ModeToggle } from "@/components/ModeToggle";
 
 const geistSans = Geist({
 	variable: "--font-geist-sans",
@@ -43,8 +43,7 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en" suppressHydrationWarning>
-			<body
+			<div
 				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
 			>
 				<ThemeProvider
@@ -66,7 +65,6 @@ export default function RootLayout({
 						<Toaster />
 					</SessionProvider>
 				</ThemeProvider>
-			</body>
-		</html>
+			</div>
 	);
 }

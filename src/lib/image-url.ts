@@ -19,8 +19,18 @@ const imageUrl = {
 
 		// Use environment variable for CDN domain
 		// In client components, this will use the NEXT_PUBLIC_ prefixed variable
-		const cdnDomain =
-			process.env.NEXT_PUBLIC_BUNNYCDN_STORAGE_ZONE_NAME || "";
+		const cdnDomain = process.env.NEXT_PUBLIC_BUNNYCDN_STORAGE_ZONE_NAME;
+
+		// If CDN domain is not set, return a placeholder or the path itself
+		if (!cdnDomain) {
+			console.warn(
+				"NEXT_PUBLIC_BUNNYCDN_STORAGE_ZONE_NAME is not set. Image URLs may not work correctly.",
+			);
+			// Return the path as is, which will be relative to the current domain
+			// This allows images to still work in development if they're served from the same domain
+			return path;
+		}
+
 		return `https://${cdnDomain}.b-cdn.net/${path}`;
 	},
 
@@ -33,12 +43,22 @@ const imageUrl = {
 		if (!url) return null;
 
 		// Use environment variable for CDN domain
-		const cdnDomain = `${process.env.NEXT_PUBLIC_BUNNYCDN_STORAGE_ZONE_NAME}.b-cdn.net/`;
-		const index = url.indexOf(cdnDomain);
+		const cdnDomain = process.env.NEXT_PUBLIC_BUNNYCDN_STORAGE_ZONE_NAME;
+
+		// If CDN domain is not set, we can't extract the path
+		if (!cdnDomain) {
+			console.warn(
+				"NEXT_PUBLIC_BUNNYCDN_STORAGE_ZONE_NAME is not set. Cannot extract path from URL.",
+			);
+			return null;
+		}
+
+		const cdnPattern = `${cdnDomain}.b-cdn.net/`;
+		const index = url.indexOf(cdnPattern);
 
 		if (index === -1) return null;
 
-		return url.substring(index + cdnDomain.length);
+		return url.substring(index + cdnPattern.length);
 	},
 };
 

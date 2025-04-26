@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { prisma } from "@/shared/lib/db";
-import { validateSearchInput } from "@/utils/validateSearchInput";
+import { prisma } from "@/lib/db";
+import { validateSearchInput } from "@/lib/validateSearchInput";
 
 /**
  * Server action to fetch users with caching

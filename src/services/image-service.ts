@@ -2,8 +2,8 @@
 
 import sharp from "sharp";
 import { randomUUID } from "crypto";
-import bunnyStorage from "./image-cdn";
-import imageUrl from "./image-url";
+import bunnyStorage from "../lib/image-cdn";
+import imageUrl from "../lib/image-url";
 
 interface ImageUploadOptions {
 	width?: number;

@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { CalendarIcon } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { cn } from "@/lib/utils";
 
 // Define the validation schema for the form
 const userFormSchema = z.object({

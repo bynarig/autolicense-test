@@ -1,8 +1,8 @@
 "use server";
 
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/shared/lib/db";
-import { isAdmin } from "@/features/role-check";
+import { prisma } from "@/lib/db";
+import { isAdmin } from "@/lib/role-check";
 import { auth } from "@/app/(root)/user/(auth)/auth";
 
 type tParams = Promise<{ id: string }>;

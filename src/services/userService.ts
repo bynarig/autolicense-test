@@ -1,5 +1,5 @@
 import { toast } from "sonner";
-import { validateSearchInput } from "@/utils/validateSearchInput";
+import { validateSearchInput } from "@/lib/validateSearchInput";
 import { fetchUsersServer } from "./serverActions";
 
 export interface User {
