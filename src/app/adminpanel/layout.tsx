@@ -43,28 +43,28 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-			<div
-				className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+		<div
+			className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+		>
+			<ThemeProvider
+				attribute="class"
+				defaultTheme="system"
+				enableSystem
+				disableTransitionOnChange
 			>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-					disableTransitionOnChange
-				>
-					<SessionProvider>
-						<AdminStrict />
-						<SidebarProvider>
-							<AppSidebar />
-							<SidebarTrigger />
-							<div className="fixed top-4 right-4 z-50">
-								<ModeToggle />
-							</div>
-							<main className="w-full">{children}</main>
-						</SidebarProvider>
-						<Toaster />
-					</SessionProvider>
-				</ThemeProvider>
-			</div>
+				<SessionProvider>
+					<AdminStrict />
+					<SidebarProvider>
+						<AppSidebar />
+						<SidebarTrigger />
+						<div className="fixed top-4 right-4 z-50">
+							<ModeToggle />
+						</div>
+						<main className="w-full">{children}</main>
+					</SidebarProvider>
+					<Toaster />
+				</SessionProvider>
+			</ThemeProvider>
+		</div>
 	);
 }

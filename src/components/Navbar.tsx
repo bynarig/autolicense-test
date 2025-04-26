@@ -52,7 +52,10 @@ export default function Navbar() {
 				<div className="flex h-16 items-center justify-between relative z-10">
 					{/* Logo/Brand */}
 					<div className="flex items-center">
-						<Link href="/" className="text-xl font-semibold text-foreground flex items-center gap-2">
+						<Link
+							href="/"
+							className="text-xl font-semibold text-foreground flex items-center gap-2"
+						>
 							<span className="text-primary">Ireland</span>FAQ
 						</Link>
 					</div>
@@ -63,34 +66,55 @@ export default function Navbar() {
 							<NavigationMenuList>
 								<NavigationMenuItem>
 									<Link href="/" legacyBehavior passHref>
-										<NavigationMenuLink className={navigationMenuTriggerStyle()}>
+										<NavigationMenuLink
+											className={navigationMenuTriggerStyle()}
+										>
 											Home
 										</NavigationMenuLink>
 									</Link>
 								</NavigationMenuItem>
 
 								<NavigationMenuItem>
-									<NavigationMenuTrigger>Services</NavigationMenuTrigger>
+									<NavigationMenuTrigger>
+										Services
+									</NavigationMenuTrigger>
 									<NavigationMenuContent>
 										<ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
-											<ListItem href="/license/test" title="License Test">
-												Take your Irish driving license test online
+											<ListItem
+												href="/license/test"
+												title="License Test"
+											>
+												Take your Irish driving license
+												test online
 											</ListItem>
-											<ListItem href="/license/prices" title="Pricing">
-												View our subscription plans and pricing
+											<ListItem
+												href="/license/prices"
+												title="Pricing"
+											>
+												View our subscription plans and
+												pricing
 											</ListItem>
-											<ListItem href="/categories" title="Categories">
+											<ListItem
+												href="/categories"
+												title="Categories"
+											>
 												Browse information by categories
 											</ListItem>
-											<ListItem href="/why-us" title="Why Choose Us">
-												Learn why our service is the best choice
+											<ListItem
+												href="/why-us"
+												title="Why Choose Us"
+											>
+												Learn why our service is the
+												best choice
 											</ListItem>
 										</ul>
 									</NavigationMenuContent>
 								</NavigationMenuItem>
 
 								<NavigationMenuItem>
-									<NavigationMenuTrigger>Resources</NavigationMenuTrigger>
+									<NavigationMenuTrigger>
+										Resources
+									</NavigationMenuTrigger>
 									<NavigationMenuContent>
 										<ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
 											{components.map((component) => (
@@ -107,22 +131,35 @@ export default function Navbar() {
 								</NavigationMenuItem>
 
 								<NavigationMenuItem>
-									<Link href="/feedback" legacyBehavior passHref>
-										<NavigationMenuLink className={navigationMenuTriggerStyle()}>
+									<Link
+										href="/feedback"
+										legacyBehavior
+										passHref
+									>
+										<NavigationMenuLink
+											className={navigationMenuTriggerStyle()}
+										>
 											Feedback
 										</NavigationMenuLink>
 									</Link>
 								</NavigationMenuItem>
 
-								{status !== "loading" && session?.user.role === "ADMIN" && (
-									<NavigationMenuItem>
-										<Link href="/adminpanel" legacyBehavior passHref>
-											<NavigationMenuLink className={navigationMenuTriggerStyle()}>
-												Admin
-											</NavigationMenuLink>
-										</Link>
-									</NavigationMenuItem>
-								)}
+								{status !== "loading" &&
+									session?.user.role === "ADMIN" && (
+										<NavigationMenuItem>
+											<Link
+												href="/adminpanel"
+												legacyBehavior
+												passHref
+											>
+												<NavigationMenuLink
+													className={navigationMenuTriggerStyle()}
+												>
+													Admin
+												</NavigationMenuLink>
+											</Link>
+										</NavigationMenuItem>
+									)}
 							</NavigationMenuList>
 						</NavigationMenu>
 					)}
@@ -148,16 +185,27 @@ export default function Navbar() {
 										<AvatarImage
 											src={
 												session?.user?.avatarUrl
-													? imageUrl.getImageUrl(session.user.avatarUrl)
+													? imageUrl.getImageUrl(
+															session.user
+																.avatarUrl,
+														)
 													: "https://avatars.githubusercontent.com/u/124599?v=4"
 											}
 											alt={session.user.name || "User"}
 										/>
-										<AvatarFallback>{session.user.name?.charAt(0) || "U"}</AvatarFallback>
+										<AvatarFallback>
+											{session.user.name?.charAt(0) ||
+												"U"}
+										</AvatarFallback>
 									</Avatar>
 								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end" className="w-56">
-									<DropdownMenuLabel>My Account</DropdownMenuLabel>
+								<DropdownMenuContent
+									align="end"
+									className="w-56"
+								>
+									<DropdownMenuLabel>
+										My Account
+									</DropdownMenuLabel>
 									<DropdownMenuSeparator />
 									<Link href="/user/profile">
 										<DropdownMenuItem>
@@ -170,14 +218,21 @@ export default function Navbar() {
 										</DropdownMenuItem>
 									</Link>
 									<DropdownMenuSeparator />
-									<DropdownMenuItem onClick={() => clientSignOut()} className="text-destructive focus:text-destructive">
+									<DropdownMenuItem
+										onClick={() => clientSignOut()}
+										className="text-destructive focus:text-destructive"
+									>
 										Sign out
 									</DropdownMenuItem>
 								</DropdownMenuContent>
 							</DropdownMenu>
 						) : (
 							<Link href="/user/login">
-								<Button variant="default" size="sm" className="rounded-full px-4">
+								<Button
+									variant="default"
+									size="sm"
+									className="rounded-full px-4"
+								>
 									Login
 								</Button>
 							</Link>
@@ -191,7 +246,11 @@ export default function Navbar() {
 								onClick={toggleMobileMenu}
 								className="md:hidden"
 							>
-								{mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+								{mobileMenuOpen ? (
+									<X className="h-5 w-5" />
+								) : (
+									<Menu className="h-5 w-5" />
+								)}
 							</Button>
 						)}
 					</div>
@@ -250,27 +309,32 @@ export default function Navbar() {
 							Feedback
 						</Link>
 
-						{status !== "loading" && session?.user.role === "ADMIN" && (
-							<Link
-								href="/adminpanel"
-								className="block py-2 px-3 text-foreground hover:bg-primary/10 rounded-md"
-								onClick={() => setMobileMenuOpen(false)}
-							>
-								Admin Panel
-							</Link>
-						)}
+						{status !== "loading" &&
+							session?.user.role === "ADMIN" && (
+								<Link
+									href="/adminpanel"
+									className="block py-2 px-3 text-foreground hover:bg-primary/10 rounded-md"
+									onClick={() => setMobileMenuOpen(false)}
+								>
+									Admin Panel
+								</Link>
+							)}
 
 						{/* Theme and Language Controls for Mobile */}
 						<div className="py-2 px-3 space-y-4 mt-4 border-t border-border/40 pt-4">
 							<div className="font-medium">Settings</div>
 
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-muted-foreground">Theme</span>
+								<span className="text-sm text-muted-foreground">
+									Theme
+								</span>
 								<ModeToggle />
 							</div>
 
 							<div className="flex items-center justify-between">
-								<span className="text-sm text-muted-foreground">Language</span>
+								<span className="text-sm text-muted-foreground">
+									Language
+								</span>
 								<div className="w-24">
 									<LanguageSwitch />
 								</div>

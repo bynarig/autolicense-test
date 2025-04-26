@@ -1,6 +1,6 @@
 import { toast } from "sonner";
 
-interface Test {
+export interface Test {
 	id: string;
 	title: string;
 	authorId: string;
