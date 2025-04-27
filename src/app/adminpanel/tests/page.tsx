@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useRef } from "react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -52,6 +52,8 @@ export default function Page() {
 	const [totalCount, setTotalCount] = useState<number>(0);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [searchTerm, setSearchTerm] = useState<string>("");
+	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+	const initialLoadDone = useRef(false);
 	const itemsPerPage = 10;
 
 	React.useEffect(() => {
@@ -95,8 +97,11 @@ export default function Page() {
 
 	// Initial data load
 	React.useEffect(() => {
-		handleSearch("");
-	}, [handleSearch]);
+		if (!initialLoadDone.current) {
+			handleSearch("");
+			initialLoadDone.current = true;
+		}
+	});
 
 	async function onTestCreate(data: { testName: string }) {
 		const res = await fetch("/api/admin/tests", {
@@ -172,9 +177,12 @@ export default function Page() {
 					schema={searchSchema}
 				/>
 
-				<Dialog>
+				<Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
 					<DialogTrigger asChild>
-						<Button variant="outline">
+						<Button
+							variant="outline"
+							onClick={() => setDialogOpen(true)}
+						>
 							Create new Test
 							<PlusIcon />
 						</Button>
@@ -210,6 +218,7 @@ export default function Page() {
 									)?.value;
 									if (inputValue) {
 										onTestCreate({ testName: inputValue });
+										setDialogOpen(false);
 									}
 								}}
 								type="submit"

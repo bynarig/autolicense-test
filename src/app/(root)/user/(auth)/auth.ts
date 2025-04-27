@@ -53,6 +53,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				token.username = user.username;
 				token.editedAt = user.editedAt;
 				token.lastLogin = user.lastLogin;
+				token.createdAt = user.createdAt;
 				token.subscriptionLVL = user.subscriptionLVL;
 			} else if (token?.id) {
 				// If no user but token exists, fetch the latest user data from the database
@@ -64,6 +65,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 						username: true,
 						role: true,
 						avatarUrl: true,
+						createdAt: true,
+						editedAt: true,
 					},
 				});
 
@@ -73,6 +76,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					token.username = latestUser.username;
 					token.role = latestUser.role;
 					token.avatarUrl = latestUser.avatarUrl;
+					token.createdAt = latestUser.createdAt;
+					token.editedAt = latestUser.editedAt;
 				}
 			}
 			return token;
@@ -91,6 +96,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			}
 			if (token?.username) {
 				session.user.username = token.username as string;
+			}
+			if (token?.createdAt) {
+				session.user.createdAt = token.createdAt as Date;
+			}
+			if (token?.editedAt) {
+				session.user.editedAt = token.editedAt as Date;
 			}
 
 			return session;

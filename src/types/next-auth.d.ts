@@ -9,6 +9,7 @@ declare module "next-auth" {
 		username: string | null;
 		editedAt: Date | null;
 		lastLogin: Date | null;
+		createdAt: Date | null;
 		subscriptionLVL: number;
 	}
 
@@ -22,6 +23,7 @@ declare module "next-auth" {
 			avatarUrl: string | null;
 			editedAt: Date | null;
 			lastLogin: Date | null;
+			createdAt: Date | null;
 			subscriptionLVL: number;
 		} & DefaultSession["user"];
 	}
@@ -37,6 +39,7 @@ declare module "next-auth/jwt" {
 		avatarUrl: string | null;
 		editedAt: Date | null;
 		lastLogin: Date | null;
+		createdAt: Date | null;
 		subscriptionLVL: number;
 	}
 }
