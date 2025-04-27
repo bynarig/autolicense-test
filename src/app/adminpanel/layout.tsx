@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { SessionProvider } from "next-auth/react";
+import { SessionProviderWrapper } from "@/context/session-context";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -52,7 +52,7 @@ export default function RootLayout({
 				enableSystem
 				disableTransitionOnChange
 			>
-				<SessionProvider>
+				<SessionProviderWrapper>
 					<AdminStrict />
 					<SidebarProvider>
 						<AppSidebar />
@@ -63,7 +63,7 @@ export default function RootLayout({
 						<main className="w-full">{children}</main>
 					</SidebarProvider>
 					<Toaster />
-				</SessionProvider>
+				</SessionProviderWrapper>
 			</ThemeProvider>
 		</div>
 	);

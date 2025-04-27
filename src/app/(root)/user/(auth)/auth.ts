@@ -44,10 +44,36 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 	},
 	callbacks: {
 		async jwt({ token, user }) {
+			// If user object is provided, it means this is a sign-in event
 			if (user) {
 				token.id = user.id;
 				token.role = user.role;
 				token.avatarUrl = user.avatarUrl;
+				token.name = user.name;
+				token.username = user.username;
+				token.editedAt = user.editedAt;
+				token.lastLogin = user.lastLogin;
+				token.subscriptionLVL = user.subscriptionLVL;
+			} else if (token?.id) {
+				// If no user but token exists, fetch the latest user data from the database
+				// This ensures the token always has the most up-to-date user information
+				const latestUser = await prisma.user.findUnique({
+					where: { id: token.id as string },
+					select: {
+						name: true,
+						username: true,
+						role: true,
+						avatarUrl: true,
+					},
+				});
+
+				if (latestUser) {
+					// Update token with latest user data
+					token.name = latestUser.name;
+					token.username = latestUser.username;
+					token.role = latestUser.role;
+					token.avatarUrl = latestUser.avatarUrl;
+				}
 			}
 			return token;
 		},
@@ -59,6 +85,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			if (token?.avatarUrl) {
 				// Store the path in the session, the Navbar component will convert it to a full URL
 				session.user.avatarUrl = token.avatarUrl as string;
+			}
+			if (token?.name) {
+				session.user.name = token.name as string;
+			}
+			if (token?.username) {
+				session.user.username = token.username as string;
 			}
 
 			return session;

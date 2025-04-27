@@ -1,10 +1,10 @@
 "use client";
 
-import { useSession } from "next-auth/react";
+import { useSessionWrapper } from "@/context/session-context";
 import { useRouter } from "next/navigation";
 
 export default function AdminStrict() {
-	const { data: session, status } = useSession();
+	const { data: session, status } = useSessionWrapper();
 	const router = useRouter();
 
 	if (status === "loading") {

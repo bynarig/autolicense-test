@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "sonner";
+import { clearSessionCache } from "@/context/session-context";
 
 export async function clientSignOut(callbackUrl: string = "/") {
 	const res = await fetch("/api/auth/logout", {
@@ -10,6 +11,10 @@ export async function clientSignOut(callbackUrl: string = "/") {
 	});
 	if (res.status === 200) {
 		toast("Successfully signed out.");
+		// Clear all session data from localStorage
+		clearSessionCache();
+		// Redirect to the main page
+		window.location.href = callbackUrl;
 	} else {
 		toast("Failed to sign out.");
 	}

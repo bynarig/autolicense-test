@@ -3,8 +3,8 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
-import { Suspense, useEffect, useState } from "react";
+import { useSessionWrapper } from "@/context/session-context";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
 	Card,
@@ -34,17 +34,58 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Test } from "@/services/testService";
 
 export default function Page() {
-	const { data: session, status } = useSession();
+	const { data: session, status, update, avatarUrl } = useSessionWrapper();
 	const router = useRouter();
 	const isMobile = useIsMobile();
 	const [activeTab, setActiveTab] = useState("profile");
+	const [isEditing, setIsEditing] = useState(false);
+	const [formData, setFormData] = useState({
+		name: "",
+		email: "",
+		username: "",
+	});
+	// State to track if we need to update the session
+	const [needsSessionUpdate, setNeedsSessionUpdate] = useState(true);
+	// Ref to track if we've attempted to load the session
+	const sessionLoadAttemptedRef = useRef(false);
 
 	useEffect(() => {
-		// Only redirect if we're definitely not authenticated (not during loading)
-		if (status === "unauthenticated") {
-			router.push("/user/login");
-		}
+		// Set a small timeout to ensure we've attempted to load the session from cache
+		const timer = setTimeout(() => {
+			sessionLoadAttemptedRef.current = true;
+			// Only redirect if we're definitely not authenticated and we've attempted to load the session
+			if (
+				status === "unauthenticated" &&
+				sessionLoadAttemptedRef.current
+			) {
+				router.push("/user/login");
+			}
+		}, 500); // 500ms should be enough time for the session to load from cache
+
+		return () => clearTimeout(timer);
 	}, [status, router]);
+
+	// Update session when needed
+	useEffect(() => {
+		// Only update if we're authenticated and we need to update
+		if (status === "authenticated" && update && needsSessionUpdate) {
+			// Mark that we've updated
+			setNeedsSessionUpdate(false);
+			// Force session update
+			update();
+		}
+	}, [status, update, needsSessionUpdate]);
+
+	// Initialize form data when session is available
+	useEffect(() => {
+		if (session && session.user) {
+			setFormData({
+				name: session.user.name || "",
+				email: session.user.email || "",
+				username: session.user.username || "",
+			});
+		}
+	}, [session]);
 
 	// Show loading state while session is being determined
 	if (status === "loading") {
@@ -73,6 +114,64 @@ export default function Page() {
 			return format(date, "PPP");
 		} catch (e) {
 			return "Invalid date";
+		}
+	};
+
+	// Handle form input changes
+	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const { name, value } = e.target;
+		setFormData((prev) => ({
+			...prev,
+			[name]: value,
+		}));
+	};
+
+	// Toggle edit mode
+	const toggleEditMode = () => {
+		if (isEditing) {
+			// Cancel editing
+			if (session && session.user) {
+				setFormData({
+					name: session.user.name || "",
+					email: session.user.email || "",
+					username: session.user.username || "",
+				});
+			}
+		}
+		setIsEditing(!isEditing);
+	};
+
+	// Save profile changes
+	const saveProfile = async () => {
+		try {
+			// Make an API call to update the user profile
+			const response = await fetch("/api/user/profile", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					name: formData.name,
+					username: formData.username,
+				}),
+			});
+
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.error || "Failed to update profile");
+			}
+
+			const result = await response.json();
+
+			// Update the session with the new data
+			await update();
+
+			// Set flag to trigger another session update to ensure changes are reflected
+			setNeedsSessionUpdate(true);
+
+			setIsEditing(false);
+		} catch (error) {
+			console.error("Failed to update profile:", error);
 		}
 	};
 
@@ -123,11 +222,12 @@ export default function Page() {
 								<Avatar className="h-24 w-24 md:h-32 md:w-32 border-4 border-background shadow-lg">
 									<AvatarImage
 										src={
-											session.user.avatarUrl
+											avatarUrl ||
+											(session.user.avatarUrl
 												? imageUrl.getImageUrl(
 														session.user.avatarUrl,
 													)
-												: "https://avatars.githubusercontent.com/u/124599?v=4"
+												: "https://avatars.githubusercontent.com/u/124599?v=4")
 										}
 										alt={session.user.name || "User"}
 									/>
@@ -258,15 +358,31 @@ export default function Page() {
 													<h3 className="text-sm font-medium text-muted-foreground mb-1">
 														Full Name
 													</h3>
-													<p className="text-foreground">
-														{session.user.name ||
-															"Not provided"}
-													</p>
+													{isEditing ? (
+														<input
+															type="text"
+															name="name"
+															value={
+																formData.name
+															}
+															onChange={
+																handleInputChange
+															}
+															className="w-full p-2 border rounded-md"
+														/>
+													) : (
+														<p className="text-foreground">
+															{session.user
+																.name ||
+																"Not provided"}
+														</p>
+													)}
 												</div>
 												<div>
 													<h3 className="text-sm font-medium text-muted-foreground mb-1">
 														Email Address
 													</h3>
+
 													<p className="text-foreground">
 														{session.user.email ||
 															"Not provided"}
@@ -276,11 +392,25 @@ export default function Page() {
 													<h3 className="text-sm font-medium text-muted-foreground mb-1">
 														Username
 													</h3>
-													<p className="text-foreground">
-														{session.user
-															.username ||
-															"Not provided"}
-													</p>
+													{isEditing ? (
+														<input
+															type="text"
+															name="username"
+															value={
+																formData.username
+															}
+															onChange={
+																handleInputChange
+															}
+															className="w-full p-2 border rounded-md"
+														/>
+													) : (
+														<p className="text-foreground">
+															{session.user
+																.username ||
+																"Not provided"}
+														</p>
+													)}
 												</div>
 												<div>
 													<h3 className="text-sm font-medium text-muted-foreground mb-1">
@@ -317,13 +447,32 @@ export default function Page() {
 												</div>
 											</div>
 										</CardContent>
-										<CardFooter>
-											<Button
-												variant="outline"
-												className="w-full md:w-auto"
-											>
-												Edit Profile
-											</Button>
+										<CardFooter className="flex gap-2">
+											{isEditing ? (
+												<>
+													<Button
+														onClick={saveProfile}
+														className="w-full md:w-auto"
+													>
+														Save Changes
+													</Button>
+													<Button
+														variant="outline"
+														onClick={toggleEditMode}
+														className="w-full md:w-auto"
+													>
+														Cancel
+													</Button>
+												</>
+											) : (
+												<Button
+													variant="outline"
+													onClick={toggleEditMode}
+													className="w-full md:w-auto"
+												>
+													Edit Profile
+												</Button>
+											)}
 										</CardFooter>
 									</Card>
 								</TabsContent>
@@ -496,6 +645,23 @@ export default function Page() {
 														size="sm"
 													>
 														Change Password
+													</Button>
+												</div>
+
+												<div className="flex items-center justify-between p-4 border rounded-lg">
+													<div>
+														<h3 className="font-medium">
+															Delete Account
+														</h3>
+														<p className="text-sm text-muted-foreground">
+															Delete your account
+														</p>
+													</div>
+													<Button
+														variant="outline"
+														size="sm"
+													>
+														Delete
 													</Button>
 												</div>
 											</div>

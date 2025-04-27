@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 import { components } from "@/data/navbar/data";
-import { useSession } from "next-auth/react";
+import { useSessionWrapper } from "@/context/session-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { clientSignOut } from "@/app/(root)/user/(auth)/auth-actions";
 import { Button } from "@/components/ui/button";
@@ -35,7 +35,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 import LanguageSwitch from "@/components/languageSwitch";
 
 export default function Navbar() {
-	const { data: session, status } = useSession();
+	const { data: session, status, avatarUrl } = useSessionWrapper();
 	const isMobile = useIsMobile();
 	const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -184,12 +184,13 @@ export default function Navbar() {
 									<Avatar className="h-8 w-8 transition-transform hover:scale-105">
 										<AvatarImage
 											src={
-												session?.user?.avatarUrl
+												avatarUrl ||
+												(session?.user?.avatarUrl
 													? imageUrl.getImageUrl(
 															session.user
 																.avatarUrl,
 														)
-													: "https://avatars.githubusercontent.com/u/124599?v=4"
+													: "https://avatars.githubusercontent.com/u/124599?v=4")
 											}
 											alt={session.user.name || "User"}
 										/>

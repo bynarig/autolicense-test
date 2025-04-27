@@ -22,7 +22,7 @@ import {
 	clientRegister,
 	clientSignIn,
 } from "@/app/(root)/user/(auth)/auth-actions";
-import { useSession } from "next-auth/react";
+import { useSessionWrapper } from "@/context/session-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -32,7 +32,7 @@ import { useEffect } from "react";
 // }
 
 export default function Page() {
-	const { status, update } = useSession();
+	const { status, update } = useSessionWrapper();
 	const router = useRouter();
 
 	useEffect(() => {

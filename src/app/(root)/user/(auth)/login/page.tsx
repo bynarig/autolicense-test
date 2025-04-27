@@ -18,13 +18,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema } from "@/lib/zod";
-import { useSession } from "next-auth/react";
+import { useSessionWrapper } from "@/context/session-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { clientSignIn } from "@/app/(root)/user/(auth)/auth-actions";
 
 export default function Page() {
-	const { status, update } = useSession();
+	const { status, update } = useSessionWrapper();
 	const router = useRouter();
 
 	// Handle session-based redirect

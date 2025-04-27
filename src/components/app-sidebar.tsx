@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { clientSignOut } from "@/app/(root)/user/(auth)/auth-actions";
-import { useSession } from "next-auth/react";
+import { useSessionWrapper } from "@/context/session-context";
 import { Suspense } from "react";
 
 // Menu items.
@@ -71,7 +71,7 @@ const items = [
 ];
 
 export function AppSidebar() {
-	const { data: session } = useSession();
+	const { data: session } = useSessionWrapper();
 
 	return (
 		<>
@@ -121,14 +121,10 @@ export function AppSidebar() {
 													Account
 												</Link>
 											</DropdownMenuItem>
-											<DropdownMenuItem>
-												<span
-													onClick={() =>
-														clientSignOut()
-													}
-												>
-													Sign out
-												</span>
+											<DropdownMenuItem
+												onClick={() => clientSignOut()}
+											>
+												Sign out
 											</DropdownMenuItem>
 										</DropdownMenuContent>
 									</DropdownMenu>
