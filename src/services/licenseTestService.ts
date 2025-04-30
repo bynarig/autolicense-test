@@ -1,16 +1,5 @@
 import { toast } from "sonner";
-
-// Define the question interface
-export interface LicenseQuestion {
-	id: string;
-	question: string;
-	image?: string;
-	answers: {
-		id: string;
-		text: string;
-		isCorrect: boolean;
-	}[];
-}
+import { LicenseQuestion, LicenseAnswer } from "@/types";
 
 // Sample license test questions
 export const licenseTestQuestions: LicenseQuestion[] = [

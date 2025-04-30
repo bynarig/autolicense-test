@@ -1,16 +1,19 @@
 "use client";
 
 import React from "react";
+import { User } from "@/types";
 
-interface UserMetadata {
-	createdAt?: Date;
-	lastLogin?: string;
-	editedAt?: string;
-	subscriptionLVL?: string;
-	subscriptionType?: string;
-	subscriptionExpiresAt?: string;
-	emailVerified?: boolean;
-}
+// Use a subset of the User type for metadata display
+type UserMetadata = Pick<
+	Partial<User>,
+	| "createdAt"
+	| "lastLogin"
+	| "editedAt"
+	| "subscriptionLVL"
+	| "subscriptionType"
+	| "subscriptionExpiresAt"
+	| "emailVerified"
+>;
 
 interface UserInfoDisplayProps {
 	userData: UserMetadata;
@@ -45,10 +48,11 @@ export const UserInfoDisplay: React.FC<UserInfoDisplayProps> = ({
 			</p>
 			<p className={className}>
 				Last Login:{" "}
-				{userData?.lastLogin || formatDate(userData?.createdAt)}
+				{userData?.lastLogin?.toString() ||
+					formatDate(userData?.createdAt).toString()}
 			</p>
 			<p className={className}>
-				Edited At: {userData?.editedAt || "never"}
+				Edited At: {userData?.editedAt?.toString() || "never"}
 			</p>
 		</div>
 	);

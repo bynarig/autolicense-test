@@ -13,16 +13,7 @@ import {
 } from "@/components/ui/table";
 import { CopyableCell } from "./CopyableCell";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
-
-interface User {
-	id: string;
-	name: string;
-	email: string | null;
-	role: string;
-	createdAt?: Date;
-	lastActive?: string;
-	[key: string]: any;
-}
+import { User } from "@/types";
 
 interface UsersTableProps {
 	users: User[];
@@ -103,7 +94,7 @@ export function UsersTable({
 							</TableCell>
 							<TableCell>
 								<CopyableCell
-									value={user.lastActive}
+									value={user.lastLogin}
 									formatter={formatDate}
 								/>
 							</TableCell>

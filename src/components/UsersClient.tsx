@@ -14,15 +14,7 @@ import {
 	PaginationPrevious,
 } from "@/components/ui/pagination";
 
-interface User {
-	id: string;
-	name: string;
-	email: string | null;
-	role: string;
-	createdAt?: Date;
-	lastActive?: string;
-	[key: string]: any;
-}
+import { User } from "@/types";
 
 interface UsersClientProps {
 	initialUsers: User[];

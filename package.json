@@ -15,7 +15,7 @@
 	"dependencies": {
 		"@auth/prisma-adapter": "^2.8.0",
 		"@hookform/resolvers": "^5.0.1",
-		"@prisma/client": "^6.6.0",
+		"@prisma/client": "^6.7.0",
 		"@radix-ui/react-alert-dialog": "^1.1.10",
 		"@radix-ui/react-avatar": "^1.1.6",
 		"@radix-ui/react-checkbox": "^1.2.2",
@@ -32,7 +32,7 @@
 		"@reduxjs/toolkit": "^2.6.1",
 		"axios": "^1.8.4",
 		"bcryptjs": "^3.0.2",
-		"bunnycdn-storage-ts": "^2.0.1",
+		"bunnycdn-storage-ts": "2.2.0-beta.1",
 		"class-variance-authority": "^0.7.1",
 		"clipboard": "^2.0.11",
 		"clsx": "^2.1.1",
@@ -69,7 +69,7 @@
 		"eslint-config-prettier": "^10.1.2",
 		"eslint-plugin-prettier": "^5.2.6",
 		"prettier": "^3.5.3",
-		"prisma": "^6.6.0",
+		"prisma": "^6.7.0",
 		"tailwindcss": "^4",
 		"typescript": "^5"
 	},
@@ -81,7 +81,8 @@
 	},
 	"pnpm": {
 		"overrides": {
-			"@auth/core": "^0.38.0"
+			"@auth/core": "^0.38.0",
+			"@img/sharp-libvips-darwin-arm64": "1.1.0"
 		},
 		"ignoredBuiltDependencies": [
 			"@prisma/client",

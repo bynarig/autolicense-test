@@ -1,16 +1,7 @@
 import { toast } from "sonner";
 import { validateSearchInput } from "@/lib/validateSearchInput";
 import { fetchUsersServer } from "./serverActions";
-
-export interface User {
-	id: string;
-	name: string;
-	email: string | null;
-	role: string;
-	createdAt?: Date;
-	lastActive?: string;
-	[key: string]: any;
-}
+import { User } from "@/types";
 
 // Cache for storing search results
 const searchCache = new Map<

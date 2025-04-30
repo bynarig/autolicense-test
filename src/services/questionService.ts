@@ -1,17 +1,5 @@
 import { toast } from "sonner";
-
-interface Question {
-	id: string;
-	title: string;
-	authorId: string;
-	createdAt?: Date;
-	author?: {
-		name?: string;
-		id?: string;
-	};
-	timeCompleted?: number;
-	[key: string]: any;
-}
+import { Question } from "@/types";
 
 // Cache for storing search results
 const searchCache = new Map<

@@ -31,7 +31,11 @@ import {
 import imageUrl from "@/lib/image-url";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Test } from "@/services/testService";
+import { Test } from "@/types";
+
+interface CurrentTest extends Test {
+	score: number;
+}
 
 export default function Page() {
 	const { data: session, status, update, avatarUrl } = useSessionWrapper();
@@ -687,7 +691,7 @@ export default function Page() {
 												<div className="space-y-4">
 													{session.user.test.map(
 														(
-															test: Test,
+															test: CurrentTest,
 															index: number,
 														) => (
 															<div

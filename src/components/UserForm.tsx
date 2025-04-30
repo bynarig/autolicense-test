@@ -45,6 +45,7 @@ const userFormSchema = z.object({
 	emailVerified: z.boolean().optional(),
 });
 
+// Form data type based on the schema, but aligned with the User model from models.ts
 export type UserFormData = z.infer<typeof userFormSchema>;
 
 interface UserFormProps {

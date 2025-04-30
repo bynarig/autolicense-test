@@ -1,17 +1,5 @@
 import { toast } from "sonner";
-
-export interface Test {
-	id: string;
-	title: string;
-	authorId: string;
-	createdAt?: Date;
-	author?: {
-		name?: string;
-		id?: string;
-	};
-	timeCompleted?: number;
-	[key: string]: any;
-}
+import { Test } from "@/types";
 
 // Cache for storing search results
 const searchCache = new Map<

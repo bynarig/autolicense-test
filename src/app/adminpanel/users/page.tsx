@@ -1,4 +1,4 @@
-import { Metadata } from "next";
+// import { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { UsersClient } from "@/components/UsersClient";
 
