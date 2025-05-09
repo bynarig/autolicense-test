@@ -4,7 +4,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { EditIcon } from "lucide-react";
-import imageUrl from "@/lib/image-url";
+import imageUrl from "@/split/client/services/image.service";
 
 interface ImageUploaderProps {
 	initialImage?: string;
@@ -108,7 +108,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 						style={{ width, height }}
 					>
 						<span className="text-gray-500">
-							Image not available
+							No selected image or image is invalid.
 						</span>
 					</div>
 				) : (
@@ -125,7 +125,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
 				{isHovering && (
 					<div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 rounded-md">
 						<span className="text-white font-medium">
-							{selectedFile ? "Image selected" : <EditIcon />}
+							<EditIcon />
 						</span>
 					</div>
 				)}

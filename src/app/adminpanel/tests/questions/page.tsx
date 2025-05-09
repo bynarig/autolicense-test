@@ -1,19 +1,10 @@
 "use client";
 
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useCallback, useState, useRef } from "react";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { searchSchema } from "@/lib/zod";
+import { searchSchema } from "@/validators/zod";
 import {
 	Table,
 	TableBody,
@@ -23,7 +14,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { ArrowDownIcon, PlusIcon, Search } from "lucide-react";
+import { ArrowDownIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import ClipboardJS from "clipboard";
 import {
@@ -37,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SearchForm } from "@/components/SearchForm";
-import { fetchQuestions } from "@/services/questionService";
+import { fetchQuestions } from "@/app/adminpanel/tests/questions/question.service";
 import {
 	Pagination,
 	PaginationContent,
@@ -53,8 +44,9 @@ export default function Page() {
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
+	const [isUploading, setIsUploading] = useState<boolean>(false);
 	const initialLoadDone = useRef(false);
-	const itemsPerPage = 10;
+	const itemsPerPage = 50;
 
 	React.useEffect(() => {
 		const clipboard = new ClipboardJS(".copy-btn", {
@@ -103,7 +95,10 @@ export default function Page() {
 		}
 	});
 
-	async function onQuestionCreate(data: { questionName: string }) {
+	async function onQuestionCreate(data: {
+		questionName: string;
+		imageUrl?: string | null;
+	}) {
 		const res = await fetch("/api/admin/tests/questions", {
 			method: "POST",
 			body: JSON.stringify(data),
@@ -115,7 +110,9 @@ export default function Page() {
 			setQuestions((prevQuestions) => [...prevQuestions, json.data]);
 			// Or refetch all questions
 			// onSubmit({ search: "" });
-			toast("question successfully created.");
+			toast("Question successfully created.");
+			// Redirect to the question page
+			window.location.href = `/adminpanel/tests/questions/${json.data.id}`;
 		} else {
 			const json = await res.json();
 			toast(
@@ -192,8 +189,8 @@ export default function Page() {
 						<DialogHeader>
 							<DialogTitle>Create NEW question</DialogTitle>
 							<DialogDescription>
-								Create name for your question. Click save when
-								you&apos;re done.
+								Create name for your question and upload an
+								image. Click create when you&apos;re done.
 							</DialogDescription>
 						</DialogHeader>
 						<div className="grid gap-4 py-4">
@@ -210,22 +207,38 @@ export default function Page() {
 						</div>
 						<DialogFooter>
 							<Button
-								onClick={() => {
+								onClick={async () => {
 									const inputValue = (
 										document.getElementById(
 											"newquestionname",
 										) as HTMLInputElement
 									)?.value;
 									if (inputValue) {
-										onQuestionCreate({
-											questionName: inputValue,
-										});
-										setDialogOpen(false);
+										setIsUploading(true);
+										try {
+											const imageUrl = null;
+											await onQuestionCreate({
+												questionName: inputValue,
+												imageUrl,
+											});
+											setDialogOpen(false);
+										} catch (error) {
+											console.error(
+												"Error creating question:",
+												error,
+											);
+											toast.error(
+												"Failed to create question",
+											);
+										} finally {
+											setIsUploading(false);
+										}
 									}
 								}}
 								type="submit"
+								disabled={isUploading}
 							>
-								Create
+								{isUploading ? "Creating..." : "Create"}
 							</Button>
 						</DialogFooter>
 					</DialogContent>

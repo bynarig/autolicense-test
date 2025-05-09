@@ -51,3 +51,34 @@ export async function clientRegister(data: {
 	}
 	return res;
 }
+
+export async function clientRequestPasswordReset(data: { email: string }) {
+	const res = await fetch("/api/auth/reset-password", {
+		method: "POST",
+		body: JSON.stringify(data),
+		headers: { "Content-Type": "application/json" },
+	});
+	if (res.status === 200) {
+		toast("Password reset link sent to your email.");
+	} else {
+		toast("Failed to send password reset link.");
+	}
+	return res;
+}
+
+export async function clientResetPassword(data: {
+	token: string;
+	password: string;
+}) {
+	const res = await fetch("/api/auth/reset-password/confirm", {
+		method: "POST",
+		body: JSON.stringify(data),
+		headers: { "Content-Type": "application/json" },
+	});
+	if (res.status === 200) {
+		toast("Password successfully reset.");
+	} else {
+		toast("Failed to reset password.");
+	}
+	return res;
+}

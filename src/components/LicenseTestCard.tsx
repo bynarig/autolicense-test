@@ -10,13 +10,13 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle } from "lucide-react";
-import { LicenseAnswer } from "@/types";
+import { LicenseAnswerType } from "@/types";
 
 interface LicenseTestCardProps {
 	id: string;
 	question: string;
 	image?: string;
-	answers: LicenseAnswer[];
+	answers: LicenseAnswerType[];
 	onAnswerSelected: (answerId: string, isCorrect: boolean) => void;
 	selectedAnswerId?: string;
 	showResult?: boolean;

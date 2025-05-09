@@ -13,10 +13,10 @@ import {
 } from "@/components/ui/table";
 import { CopyableCell } from "./CopyableCell";
 import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
-import { User } from "@/types";
+import { UserType } from "@/types";
 
 interface UsersTableProps {
-	users: User[];
+	users: UserType[];
 	caption?: string;
 	detailsPath?: string;
 }

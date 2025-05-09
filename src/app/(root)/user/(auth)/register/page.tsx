@@ -17,19 +17,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema } from "@/lib/zod";
-import {
-	clientRegister,
-	clientSignIn,
-} from "@/app/(root)/user/(auth)/auth-actions";
+import { authSchema } from "@/validators/zod";
+import { clientRegister } from "@/app/(root)/user/(auth)/auth-actions";
 import { useSessionWrapper } from "@/context/session-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
-// interface Props {
-//   params: Promise<{ slug: string[] }>;
-//   searchParams: Promise<{ errors?: string }>;
-// }
 
 export default function Page() {
 	const { status, update } = useSessionWrapper();
@@ -41,8 +33,8 @@ export default function Page() {
 		}
 	}, [status, router]);
 
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<z.infer<typeof authSchema>>({
+		resolver: zodResolver(authSchema),
 		defaultValues: {
 			email: "",
 			password: "",
@@ -56,7 +48,6 @@ export default function Page() {
 			await update();
 		} else {
 			const errorData = await res.json();
-			// console.error("Login failed:", errorData.error)
 		}
 		// TODO: extend error handling
 	}

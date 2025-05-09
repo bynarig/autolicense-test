@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 		"Take a practice driver license test to prepare for your Irish driving license exam",
 };
 
-export default function LicenseTestPage() {
+export default function Page() {
 	return (
 		<>
 			<Navbar />

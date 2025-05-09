@@ -51,7 +51,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				token.avatarUrl = user.avatarUrl;
 				token.name = user.name;
 				token.username = user.username;
-				token.editedAt = user.editedAt;
+				token.updatedAt = user.updatedAt;
 				token.lastLogin = user.lastLogin;
 				token.createdAt = user.createdAt;
 				token.subscriptionLVL = user.subscriptionLVL;
@@ -66,7 +66,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 						role: true,
 						avatarUrl: true,
 						createdAt: true,
-						editedAt: true,
+						updatedAt: true,
 					},
 				});
 
@@ -77,7 +77,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 					token.role = latestUser.role;
 					token.avatarUrl = latestUser.avatarUrl;
 					token.createdAt = latestUser.createdAt;
-					token.editedAt = latestUser.editedAt;
+					token.updatedAt = latestUser.updatedAt;
 				}
 			}
 			return token;
@@ -100,8 +100,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			if (token?.createdAt) {
 				session.user.createdAt = token.createdAt as Date;
 			}
-			if (token?.editedAt) {
-				session.user.editedAt = token.editedAt as Date;
+			if (token?.updatedAt) {
+				session.user.updatedAt = token.updatedAt as Date;
 			}
 
 			return session;

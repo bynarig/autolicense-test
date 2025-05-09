@@ -4,4 +4,5 @@
  * for easier importing in other files
  */
 
-export * from "./models";
+export * from "./userType";
+export * from "./test-sysType";

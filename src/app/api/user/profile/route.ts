@@ -3,7 +3,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/app/(root)/user/(auth)/auth";
-import { deleteImage } from "@/services/image-service";
+import { deleteImage } from "@/split/server/services/image.service";
 
 export async function POST(req: Request) {
 	try {
@@ -55,9 +55,6 @@ export async function POST(req: Request) {
 			updateData.avatarUrl = avatarUrl;
 		}
 
-		// Add editedAt timestamp
-		updateData.editedAt = new Date();
-
 		// Check if updateData is empty
 		if (Object.keys(updateData).length === 0) {
 			return NextResponse.json(
@@ -66,12 +63,15 @@ export async function POST(req: Request) {
 			);
 		}
 
-		// Update the user in the database
+		// Update the user in the database with updatedAt timestamp
 		const updatedUser = await prisma.user.update({
 			where: {
 				id: userId,
 			},
-			data: updateData,
+			data: {
+				...updateData,
+				updatedAt: new Date(),
+			},
 		});
 
 		return NextResponse.json(

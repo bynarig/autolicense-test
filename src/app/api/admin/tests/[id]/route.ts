@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { isAdmin } from "@/lib/role-check";
+import { isAdmin } from "@/split/server/services/role-check";
 import { auth } from "@/app/(root)/user/(auth)/auth";
 
 type tParams = Promise<{ id: string }>;

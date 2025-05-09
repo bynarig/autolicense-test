@@ -1,10 +1,62 @@
-// Client-safe module for image URL handling
-// This module doesn't use any Node.js-specific APIs and is safe to use in client components
+"use client";
+
+import { toast } from "sonner";
 
 /**
- * Utility functions for handling image URLs
- * This is a client-safe version that doesn't import any Node.js modules
+ * Client-side image upload function that uses the server API
+ * @param file The file to upload
+ * @param options Optional parameters for the upload
+ * @returns The path to the uploaded image
  */
+export async function uploadImage(
+	file: File,
+	options?: { width?: number },
+): Promise<string> {
+	try {
+		const formData = new FormData();
+		formData.append("file", file);
+
+		// Add width parameter to URL if provided
+		let url = "/api/storage/upload";
+		if (options?.width) {
+			url += `?width=${options.width}`;
+		}
+
+		const response = await fetch(url, {
+			method: "POST",
+			body: formData,
+		});
+
+		if (!response.ok) {
+			const error = await response.json();
+			throw new Error(error.error || "Failed to upload image");
+		}
+
+		const data = await response.json();
+		return data.path;
+	} catch (error) {
+		console.error("Error uploading image:", error);
+		toast.error("Failed to upload image");
+		throw error;
+	}
+}
+
+/**
+ * Get the full URL for an image path
+ * @param path The path to the image
+ * @returns The full URL to the image
+ */
+export function getImageUrl(path: string): string {
+	// Check if it's already a full URL
+	if (path.startsWith("http")) {
+		return path;
+	}
+
+	// Use the CDN URL from environment or a default
+	const cdnUrl = process.env.NEXT_PUBLIC_CDN_URL || "https://cdn.example.com";
+	return `${cdnUrl}/${path}`;
+}
+
 const imageUrl = {
 	/**
 	 * Get the full URL for an image path

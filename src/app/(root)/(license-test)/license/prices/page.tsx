@@ -2,261 +2,66 @@
 
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { PricingCard } from "@/components/PricingCard";
 
 export default function Page() {
+	// Define features for each plan
+	const basicFeatures = [
+		{ included: true, text: "5 practice tests per month" },
+		{ included: true, text: "Basic question bank access" },
+		{ included: true, text: "Standard test simulations" },
+		{ included: true, text: "Progress tracking" },
+		{ included: false, text: "Personalized study plans" },
+		{ included: false, text: "Advanced analytics" },
+		{ included: false, text: "Priority support" },
+	];
+
+	const proFeatures = [
+		{ included: true, text: "Unlimited practice tests" },
+		{ included: true, text: "Full question bank access" },
+		{ included: true, text: "Advanced test simulations" },
+		{ included: true, text: "Detailed progress tracking" },
+		{ included: true, text: "Personalized study plans" },
+		{ included: false, text: "Advanced analytics" },
+		{ included: false, text: "Priority support" },
+	];
+
 	return (
 		<>
 			<Navbar />
-			<div className="flex justify-center-safe mt-40 h-150">
-				<div className="card w-96 bg-base-100 shadow-sm">
-					<div className="card-body">
-						<span className="badge badge-xs badge-ghost">
-							Standart
-						</span>
-						<div className="flex justify-between">
-							<h2 className="text-3xl font-bold">Default</h2>
-							<span className="text-xl">$0/mo</span>
-						</div>
-						<ul className="mt-6 flex flex-col gap-2 text-xs">
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>High-resolution image generation</span>
-							</li>
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>Customizable style templates</span>
-							</li>
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>Batch processing capabilities</span>
-							</li>
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>AI-driven image enhancements</span>
-							</li>
-							<li className="opacity-50">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-base-content/50"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span className="line-through">
-									Seamless cloud integration
-								</span>
-							</li>
-							<li className="opacity-50">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-base-content/50"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span className="line-through">
-									Real-time collaboration tools
-								</span>
-							</li>
-						</ul>
-						<div className="mt-6">
-							<button className="btn btn-primary btn-block btn-disabled">
-								Subscribed
-							</button>
-						</div>
-					</div>
+
+			<div className=" container mx-auto px-4 py-16 sm:py-24  md:h-[calc(100vh-64px)] place-content-center">
+				{/* Header section */}
+				<div className="text-center mb-16">
+					<h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl">
+						Simple, Transparent Pricing
+					</h1>
+					<p className="mt-6 max-w-2xl mx-auto text-xl text-muted-foreground">
+						Choose the perfect plan to cover your needs.
+					</p>
 				</div>
-				<div className="card w-96 bg-base-100 shadow-sm">
-					<div className="card-body">
-						<span className="badge badge-xs badge-warning">
-							Popular now
-						</span>
-						<div className="flex justify-between">
-							<h2 className="text-3xl font-bold">Premium</h2>
-							<span className="text-xl">$10/mo</span>
-						</div>
-						<ul className="mt-6 flex flex-col gap-2 text-xs">
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>High-resolution image generation</span>
-							</li>
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>Customizable style templates</span>
-							</li>
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>Batch processing capabilities</span>
-							</li>
-							<li>
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-success"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span>AI-driven image enhancements</span>
-							</li>
-							<li className="opacity-50">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-base-content/50"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span className="line-through">
-									Seamless cloud integration
-								</span>
-							</li>
-							<li className="opacity-50">
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									className="size-4 me-2 inline-block text-base-content/50"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-								>
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth="2"
-										d="M5 13l4 4L19 7"
-									/>
-								</svg>
-								<span className="line-through">
-									Real-time collaboration tools
-								</span>
-							</li>
-						</ul>
-						<div className="mt-6">
-							<button className="btn btn-primary btn-block">
-								Subscribe
-							</button>
-						</div>
-					</div>
+
+				<div className="flex-col-reverse flex md:grid  md:grid-cols-2 gap-8 max-w-7xl mx-auto">
+					<PricingCard
+						title="Basic"
+						price="0"
+						description="Perfect for beginners getting started with test preparation"
+						features={basicFeatures}
+						buttonText="Get Started"
+						disabled={true}
+					/>
+
+					<PricingCard
+						title="Pro"
+						price="10"
+						description="Everything you need to pass your test with confidence"
+						features={proFeatures}
+						buttonText="Subscribe Now"
+						popular={true}
+					/>
 				</div>
 			</div>
+
 			<Footer />
 		</>
 	);

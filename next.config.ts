@@ -20,6 +20,21 @@ const nextConfig: NextConfig = {
 			},
 		],
 	},
+	// Handle Node.js modules in the browser environment
+	webpack: (config, { isServer }) => {
+		if (!isServer) {
+			// Don't resolve 'fs', 'child_process', etc. on the client
+			config.resolve.fallback = {
+				...config.resolve.fallback,
+				fs: false,
+				child_process: false,
+				crypto: false,
+				net: false,
+				tls: false,
+			};
+		}
+		return config;
+	},
 };
 
 export default nextConfig;

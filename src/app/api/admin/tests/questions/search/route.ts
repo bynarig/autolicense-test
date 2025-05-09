@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { isAdmin } from "@/lib/role-check";
+import { isAdmin } from "@/split/server/services/role-check";
 
 export async function POST(req: NextRequest) {
 	try {

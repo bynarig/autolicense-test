@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { testValidationSchema } from "@/lib/zod";
+import { testValidationSchema } from "@/validators/zod";
 import { clientSignIn } from "@/app/(root)/user/(auth)/auth-actions";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
@@ -134,7 +134,7 @@ export default function Page() {
 							{testData?.author.id}
 						</p>
 						<p>Created At: {testData?.createdAt}</p>
-						<p>Edited At: {testData?.editedAt || "never"}</p>
+						<p>Edited At: {testData?.updatedAt || "never"}</p>
 						<p>Views: {testData?.views || 0}</p>
 						<p>Attempts: {testData?.attempts || 0}</p>
 						<p>TimeCompleted: {testData?.timeCompleted || 0}</p>

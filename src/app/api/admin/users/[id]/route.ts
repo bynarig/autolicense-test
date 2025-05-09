@@ -2,10 +2,10 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { isAdmin } from "@/lib/role-check";
+import { isAdmin } from "@/split/server/services/role-check";
 import { auth } from "@/app/(root)/user/(auth)/auth";
 import Bcrypt from "@/lib/bcrypt";
-import { deleteImage } from "@/services/image-service";
+import { deleteImage } from "@/split/server/services/image.service";
 
 type tParams = Promise<{ id: string }>;
 

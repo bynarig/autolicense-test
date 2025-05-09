@@ -28,12 +28,12 @@ import {
 	BookOpen,
 	Clock,
 } from "lucide-react";
-import imageUrl from "@/lib/image-url";
+import imageUrl from "@/split/client/services/image.service";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Test } from "@/types";
+import { TestType } from "@/types";
 
-interface CurrentTest extends Test {
+interface CurrentTest extends TestType {
 	score: number;
 }
 
@@ -211,7 +211,7 @@ export default function Page() {
 	return (
 		<>
 			<Navbar />
-			<main className="container mx-auto py-6 px-4 md:py-10">
+			<main className="container mx-auto py-6 px-4 md:py-10 place-content-center justify-center h-[calc(100vh-64px)]">
 				{session && session.user ? (
 					<Suspense
 						fallback={
@@ -434,7 +434,7 @@ export default function Page() {
 													<p className="text-foreground">
 														{formatDate(
 															session.user
-																.editedAt,
+																.updatedAt,
 														) || "Never"}
 													</p>
 												</div>

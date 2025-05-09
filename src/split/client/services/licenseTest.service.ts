@@ -1,12 +1,14 @@
+"use client";
+
 import { toast } from "sonner";
-import { LicenseQuestion, LicenseAnswer } from "@/types";
+import { LicenseQuestionType } from "@/types";
 
 // Sample license test questions
-export const licenseTestQuestions: LicenseQuestion[] = [
+export const licenseTestQuestions: LicenseQuestionType[] = [
 	{
 		id: "q1",
 		question: "What does a red traffic light mean?",
-		image: "https://ireland-faq-storage.b-cdn.net/traffic-light-red.jpg",
+		image: "/",
 		answers: [
 			{ id: "a1", text: "Slow down", isCorrect: false },
 			{ id: "a2", text: "Stop completely", isCorrect: true },
@@ -31,7 +33,7 @@ export const licenseTestQuestions: LicenseQuestion[] = [
 	{
 		id: "q3",
 		question: "When approaching a yield sign, what should you do?",
-		image: "https://ireland-faq-storage.b-cdn.net/yield-sign.jpg",
+		image: "/",
 		answers: [
 			{
 				id: "a1",
@@ -69,7 +71,7 @@ export const licenseTestQuestions: LicenseQuestion[] = [
 	{
 		id: "q5",
 		question: "What does this road sign indicate?",
-		image: "https://ireland-faq-storage.b-cdn.net/roundabout-sign.jpg",
+		image: "/",
 		answers: [
 			{ id: "a1", text: "No entry", isCorrect: false },
 			{ id: "a2", text: "One-way street", isCorrect: false },
@@ -79,31 +81,14 @@ export const licenseTestQuestions: LicenseQuestion[] = [
 	},
 ];
 
-/**
- * Calculates the pass threshold for the license test
- * @param totalQuestions - The total number of questions in the test
- * @returns The minimum number of correct answers needed to pass
- */
 export function calculatePassThreshold(totalQuestions: number): number {
 	return Math.ceil(totalQuestions * 0.8); // 80% to pass
 }
 
-/**
- * Determines if the user passed the test based on their score
- * @param score - The user's score (number of correct answers)
- * @param totalQuestions - The total number of questions in the test
- * @returns Whether the user passed the test
- */
 export function didUserPass(score: number, totalQuestions: number): boolean {
 	return score >= calculatePassThreshold(totalQuestions);
 }
 
-/**
- * Saves the test result to the user's history (mock implementation)
- * @param score - The user's score
- * @param totalQuestions - The total number of questions
- * @returns Promise that resolves when the result is saved
- */
 export async function saveTestResult(
 	score: number,
 	totalQuestions: number,
@@ -125,12 +110,7 @@ export async function saveTestResult(
 	}
 }
 
-/**
- * Gets a random subset of questions for a practice test
- * @param count - The number of questions to include in the practice test
- * @returns Array of randomly selected questions
- */
-export function getRandomQuestions(count: number = 5): LicenseQuestion[] {
+export function getRandomQuestions(count: number = 5): LicenseQuestionType[] {
 	if (count >= licenseTestQuestions.length) {
 		return [...licenseTestQuestions];
 	}

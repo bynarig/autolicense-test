@@ -1,4 +1,4 @@
-import { searchSchema } from "@/lib/zod";
+import { searchSchema } from "@/validators/zod";
 
 /**
  * Validates and determines the type of search input

@@ -69,28 +69,30 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
 				// Update avatar URL cache if available
 				if (updatedSession.user?.avatarUrl) {
-					import("@/lib/image-url").then((imageUrlModule) => {
-						const fullAvatarUrl =
-							imageUrlModule.default.getImageUrl(
-								updatedSession.user.avatarUrl,
-							);
-						setCachedAvatarUrl(fullAvatarUrl);
+					import("@/split/client/services/image.service").then(
+						(imageUrlModule) => {
+							const fullAvatarUrl =
+								imageUrlModule.default.getImageUrl(
+									updatedSession.user.avatarUrl,
+								);
+							setCachedAvatarUrl(fullAvatarUrl);
 
-						// Try to update localStorage
-						if (typeof window !== "undefined") {
-							try {
-								localStorage.setItem(
-									AVATAR_CACHE_KEY,
-									fullAvatarUrl,
-								);
-							} catch (error) {
-								console.error(
-									"Error saving avatar URL to cache:",
-									error,
-								);
+							// Try to update localStorage
+							if (typeof window !== "undefined") {
+								try {
+									localStorage.setItem(
+										AVATAR_CACHE_KEY,
+										fullAvatarUrl,
+									);
+								} catch (error) {
+									console.error(
+										"Error saving avatar URL to cache:",
+										error,
+									);
+								}
 							}
-						}
-					});
+						},
+					);
 				} else {
 					setCachedAvatarUrl(null);
 					if (typeof window !== "undefined") {
@@ -229,27 +231,30 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
 			// Update avatar URL cache if available
 			if (originalSession.user?.avatarUrl) {
-				import("@/lib/image-url").then((imageUrlModule) => {
-					const fullAvatarUrl = imageUrlModule.default.getImageUrl(
-						originalSession.user.avatarUrl,
-					);
-					setCachedAvatarUrl(fullAvatarUrl);
+				import("@/split/client/services/image.service").then(
+					(imageUrlModule) => {
+						const fullAvatarUrl =
+							imageUrlModule.default.getImageUrl(
+								originalSession.user.avatarUrl,
+							);
+						setCachedAvatarUrl(fullAvatarUrl);
 
-					// Try to update localStorage
-					if (typeof window !== "undefined") {
-						try {
-							localStorage.setItem(
-								AVATAR_CACHE_KEY,
-								fullAvatarUrl,
-							);
-						} catch (error) {
-							console.error(
-								"Error saving avatar URL to cache:",
-								error,
-							);
+						// Try to update localStorage
+						if (typeof window !== "undefined") {
+							try {
+								localStorage.setItem(
+									AVATAR_CACHE_KEY,
+									fullAvatarUrl,
+								);
+							} catch (error) {
+								console.error(
+									"Error saving avatar URL to cache:",
+									error,
+								);
+							}
 						}
-					}
-				});
+					},
+				);
 			} else {
 				setCachedAvatarUrl(null);
 				if (typeof window !== "undefined") {

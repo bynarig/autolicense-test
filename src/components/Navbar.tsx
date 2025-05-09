@@ -24,15 +24,56 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { components } from "@/data/navbar/data";
 import { useSessionWrapper } from "@/context/session-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { clientSignOut } from "@/app/(root)/user/(auth)/auth-actions";
 import { Button } from "@/components/ui/button";
-import imageUrl from "@/lib/image-url";
+import imageUrl from "@/split/client/services/image.service";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ModeToggle } from "@/components/ModeToggle";
 import LanguageSwitch from "@/components/languageSwitch";
+
+export const components: {
+	title: string;
+	href: string;
+	description: string;
+}[] = [
+	{
+		title: "Alert Dialog",
+		href: "/docs/primitives/alert-dialog",
+		description:
+			"A modal dialog that interrupts the user with important content and expects a response.",
+	},
+	{
+		title: "Hover Card",
+		href: "/docs/primitives/hover-card",
+		description:
+			"For sighted users to preview content available behind a link.",
+	},
+	{
+		title: "Progress",
+		href: "/docs/primitives/progress",
+		description:
+			"Displays an indicator showing the completion progress of a task, typically displayed as a progress bar.",
+	},
+	{
+		title: "Scroll-area",
+		href: "/docs/primitives/scroll-area",
+		description: "Visually or semantically separates content.",
+	},
+	{
+		title: "Tabs",
+		href: "/docs/primitives/tabs",
+		description:
+			"A set of layered sections of content—known as tab panels—that are displayed one at a time.",
+	},
+	{
+		title: "Tooltip",
+		href: "/docs/primitives/tooltip",
+		description:
+			"A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
+	},
+];
 
 export default function Navbar() {
 	const { data: session, status, avatarUrl } = useSessionWrapper();

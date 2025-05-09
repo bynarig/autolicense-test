@@ -1,34 +1,15 @@
 import { toast } from "sonner";
-import { Test } from "@/types";
+import { TestType } from "@/types";
+import {
+	CACHE_EXPIRY,
+	manageCacheSize,
+} from "@/split/client/services/cache.service";
 
 // Cache for storing search results
 const searchCache = new Map<
 	string,
-	{ data: Test[]; totalCount: number; timestamp: number }
+	{ data: TestType[]; totalCount: number; timestamp: number }
 >();
-const CACHE_EXPIRY = 60000; // Cache expires after 1 minute
-const MAX_CACHE_SIZE = 100; // Maximum number of entries in the cache
-
-/**
- * Manages the cache size by removing the oldest entries when the cache exceeds the maximum size
- */
-function manageCacheSize(): void {
-	if (searchCache.size > MAX_CACHE_SIZE) {
-		// Get all cache entries and sort them by timestamp (oldest first)
-		const entries = Array.from(searchCache.entries()).sort(
-			(a, b) => a[1].timestamp - b[1].timestamp,
-		);
-
-		// Remove the oldest entries until we're under the limit
-		const entriesToRemove = entries.slice(
-			0,
-			entries.length - MAX_CACHE_SIZE,
-		);
-		for (const [key] of entriesToRemove) {
-			searchCache.delete(key);
-		}
-	}
-}
 
 /**
  * Validates and determines the type of search input for tests
@@ -54,7 +35,7 @@ export async function fetchTests(
 	searchTerm: string = "",
 	page: number = 1,
 	limit: number = 10,
-): Promise<{ tests: Test[]; totalCount: number }> {
+): Promise<{ tests: TestType[]; totalCount: number }> {
 	// Create a cache key based on the search parameters
 	const cacheKey = `tests:${searchTerm}:${page}:${limit}`;
 
@@ -109,7 +90,7 @@ export async function fetchTests(
 			});
 
 			// Manage cache size after adding new entry
-			manageCacheSize();
+			manageCacheSize(searchCache);
 
 			return {
 				tests: json.data,

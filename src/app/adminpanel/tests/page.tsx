@@ -1,19 +1,10 @@
 "use client";
 
-import {
-	Form,
-	FormControl,
-	FormField,
-	FormItem,
-	FormMessage,
-} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import React, { useCallback, useState, useRef } from "react";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { searchSchema } from "@/lib/zod";
+import { searchSchema } from "@/validators/zod";
 import {
 	Table,
 	TableBody,
@@ -37,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SearchForm } from "@/components/SearchForm";
-import { fetchTests } from "@/services/testService";
+import { fetchTests } from "@/app/adminpanel/tests/testService";
 import {
 	Pagination,
 	PaginationContent,
@@ -54,7 +45,7 @@ export default function Page() {
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 	const initialLoadDone = useRef(false);
-	const itemsPerPage = 10;
+	const itemsPerPage = 50;
 
 	React.useEffect(() => {
 		const clipboard = new ClipboardJS(".copy-btn", {
@@ -116,6 +107,8 @@ export default function Page() {
 			// Or refetch all tests
 			// onSubmit({ search: "" });
 			toast("Test successfully created.");
+			// Redirect to the test page
+			window.location.href = `/adminpanel/tests/${json.data.id}`;
 		} else {
 			const json = await res.json();
 			toast(

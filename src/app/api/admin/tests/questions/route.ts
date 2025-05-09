@@ -3,7 +3,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@/app/(root)/user/(auth)/auth";
-import { isAdmin } from "@/lib/role-check";
+import { isAdmin } from "@/split/server/services/role-check";
 
 export async function POST(req: NextRequest) {
 	try {
@@ -13,12 +13,13 @@ export async function POST(req: NextRequest) {
 			// Check if this is a question creation request (has questionName property)
 			if (body.questionName) {
 				// Create a new question
-				const { questionName } = body;
+				const { questionName, imagePath } = body;
 				const session = await auth();
 				const autorSessionId = session?.user.id;
 				const questionData = {
 					title: questionName,
 					authorId: autorSessionId,
+					imageUrl: imagePath || null,
 				};
 
 				const response = await prisma.question.create({
@@ -35,7 +36,7 @@ export async function POST(req: NextRequest) {
 
 				// Default pagination values
 				const page = pagination?.page || 1;
-				const limit = pagination?.limit || 10;
+				const limit = pagination?.limit || 50;
 				const skip = (page - 1) * limit;
 
 				// Get total count for pagination

@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
 
 		// Default pagination values
 		const page = pagination?.page || 1;
-		const limit = pagination?.limit || 10;
+		const limit = pagination?.limit || 50;
 		const skip = (page - 1) * limit;
 
 		// Use Prisma transaction to execute both queries in a single database round trip

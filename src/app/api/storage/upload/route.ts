@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { uploadImage, getImageUrl } from "@/services/image-service";
+import {
+	getImageUrl,
+	uploadImage,
+} from "@/split/server/services/image.service";
 
 export async function POST(request: NextRequest) {
 	try {

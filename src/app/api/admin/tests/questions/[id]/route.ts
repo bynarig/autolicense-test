@@ -2,7 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { isAdmin } from "@/lib/role-check";
+import { isAdmin } from "@/split/server/services/role-check";
 
 type tParams = Promise<{ id: string }>;
 
@@ -53,6 +53,48 @@ export async function GET(req: Request, { params }: { params: tParams }) {
 					error instanceof Error ? error.message : "Unknown error",
 			},
 			{ status: 500 },
+		);
+	}
+}
+
+export async function PUT(req: Request, { params }: { params: tParams }) {
+	try {
+		if (await isAdmin()) {
+			const { id }: { id: string } = await params;
+			const body = await req.json();
+			const { title, imageUrl, text, points, category } = body;
+
+			// Prepare update data
+			const updateData: any = {};
+			if (title !== undefined) updateData.title = title;
+			if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+			if (text !== undefined) updateData.text = text;
+			if (points !== undefined) updateData.points = parseInt(points);
+			// if (category !== undefined) updateData.category = [category];
+			console.log(updateData);
+			// Add updatedAt timestamp using Prisma's update operation
+			const response = await prisma.question.update({
+				where: {
+					id: id,
+				},
+				data: {
+					...updateData,
+					updatedAt: new Date(),
+				},
+			});
+
+			return NextResponse.json(
+				{ success: true, data: response },
+				{ status: 200 },
+			);
+		} else {
+			return NextResponse.json({ error: "No access" }, { status: 403 });
+		}
+	} catch (error) {
+		console.error("Error updating question:", error);
+		return NextResponse.json(
+			{ error: "Invalid request", detail: (error as Error).message },
+			{ status: 400 },
 		);
 	}
 }

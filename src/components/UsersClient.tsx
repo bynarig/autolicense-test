@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useCallback, useState, useEffect } from "react";
-import { searchSchema } from "@/lib/zod";
+import { searchSchema } from "@/validators/zod";
 import { SearchForm } from "@/components/SearchForm";
 import { UsersTable } from "@/components/UsersTable";
-import { fetchUsers } from "@/services/userService";
+import { fetchUsers } from "@/app/adminpanel/users/userService";
 import {
 	Pagination,
 	PaginationContent,
@@ -14,10 +14,10 @@ import {
 	PaginationPrevious,
 } from "@/components/ui/pagination";
 
-import { User } from "@/types";
+import { UserType } from "@/types";
 
 interface UsersClientProps {
-	initialUsers: User[];
+	initialUsers: UserType[];
 	initialTotalCount: number;
 }
 
@@ -28,12 +28,12 @@ export function UsersClient({
 	initialUsers,
 	initialTotalCount,
 }: UsersClientProps) {
-	const [users, setUsers] = useState<User[]>(initialUsers);
+	const [users, setUsers] = useState<UserType[]>(initialUsers);
 	const [totalCount, setTotalCount] = useState<number>(initialTotalCount);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [isLoading, setIsLoading] = useState<boolean>(false);
-	const itemsPerPage = 10;
+	const itemsPerPage = 50;
 
 	const handleSearch = useCallback(async (term: string) => {
 		setIsLoading(true);

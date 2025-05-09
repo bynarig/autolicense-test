@@ -17,7 +17,7 @@ import {
 	calculatePassThreshold,
 	didUserPass,
 	saveTestResult,
-} from "@/services/licenseTestService";
+} from "@/split/client/services/licenseTest.service";
 import { CheckCircle, XCircle, Trophy, RefreshCw } from "lucide-react";
 
 interface LicenseTestProps {

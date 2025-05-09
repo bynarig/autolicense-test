@@ -13,7 +13,7 @@ import { UsersClient } from "@/components/UsersClient";
  */
 export default async function Page() {
 	// Fetch initial users data on the server
-	const itemsPerPage = 10;
+	const itemsPerPage = 50;
 
 	// Use Prisma transaction to execute both queries in a single database round trip
 	const [totalCount, users] = await prisma.$transaction([
