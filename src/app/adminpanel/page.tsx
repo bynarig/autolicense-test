@@ -3,9 +3,9 @@ import { prisma } from "@/lib/db";
 import {
 	Card,
 	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
-	CardDescription,
 } from "@/components/ui/card";
 import { formatDistanceToNow } from "date-fns";
 

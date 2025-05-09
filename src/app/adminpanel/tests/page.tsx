@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
 import { searchSchema } from "@/validators/zod";
 import {
@@ -14,7 +14,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { ArrowDownIcon, PlusIcon, Search } from "lucide-react";
+import { ArrowDownIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import ClipboardJS from "clipboard";
 import {

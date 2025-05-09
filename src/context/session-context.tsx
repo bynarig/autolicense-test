@@ -2,15 +2,17 @@
 
 import React, {
 	createContext,
+	useCallback,
 	useContext,
 	useEffect,
-	useState,
 	useRef,
-	useCallback,
+	useState,
 } from "react";
-import { useSession as useNextAuthSession } from "next-auth/react";
+import {
+	SessionProvider as NextAuthSessionProvider,
+	useSession as useNextAuthSession,
+} from "next-auth/react";
 import { Session } from "next-auth";
-import { SessionProvider as NextAuthSessionProvider } from "next-auth/react";
 
 // Define the shape of our context
 type SessionContextType = {

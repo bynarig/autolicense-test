@@ -7,8 +7,8 @@ import {
 	TableBody,
 	TableCaption,
 	TableCell,
-	TableHeader,
 	TableHead,
+	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
 import { CopyableCell } from "./CopyableCell";

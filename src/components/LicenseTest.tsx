@@ -12,13 +12,12 @@ import {
 	CardTitle,
 } from "@/components/ui/card";
 import {
-	// LicenseQuestion,
-	licenseTestQuestions,
 	calculatePassThreshold,
 	didUserPass,
+	licenseTestQuestions,
 	saveTestResult,
 } from "@/split/client/services/licenseTest.service";
-import { CheckCircle, XCircle, Trophy, RefreshCw } from "lucide-react";
+import { CheckCircle, RefreshCw, Trophy, XCircle } from "lucide-react";
 
 interface LicenseTestProps {
 	onComplete?: (score: number, totalQuestions: number) => void;

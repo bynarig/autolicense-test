@@ -1,12 +1,12 @@
 "use client";
 
 import {
-	User,
-	Home,
-	User2,
 	ChevronUp,
+	Home,
 	ScrollText,
 	ShieldQuestionIcon,
+	User,
+	User2,
 } from "lucide-react";
 
 import {

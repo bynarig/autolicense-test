@@ -20,13 +20,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
+	BookOpen,
 	CalendarIcon,
+	Clock,
 	CreditCard,
 	Lock,
-	Settings,
 	User,
-	BookOpen,
-	Clock,
 } from "lucide-react";
 import imageUrl from "@/split/client/services/image.service";
 import { format } from "date-fns";

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import Head from "next/head";
 import { SessionProviderWrapper } from "@/context/session-context";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";

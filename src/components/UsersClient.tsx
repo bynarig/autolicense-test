@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import { searchSchema } from "@/validators/zod";
 import { SearchForm } from "@/components/SearchForm";
 import { UsersTable } from "@/components/UsersTable";

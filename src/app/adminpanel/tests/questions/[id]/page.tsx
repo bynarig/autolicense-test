@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { testValidationSchema } from "@/validators/zod";
-import React, { Suspense, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { redirect, useParams } from "next/navigation";
 import ImageUploader from "@/components/ImageUploader";
