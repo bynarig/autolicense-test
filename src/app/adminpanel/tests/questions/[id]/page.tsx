@@ -135,7 +135,6 @@ export default function Page() {
 				name: questionData.title || "",
 				text: questionData.text || "",
 				points: questionData.points || 1,
-				// category: questionData.category || [""],
 			});
 		}
 	}, [questionData, form]);

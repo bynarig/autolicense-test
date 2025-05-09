@@ -27,7 +27,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
-import { clientSignOut } from "@/app/(root)/user/(auth)/auth-actions";
+import { clientSignOut } from "@client/services/auth.service";
 import { useSessionWrapper } from "@/context/session-context";
 import { Suspense } from "react";
 

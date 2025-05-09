@@ -27,7 +27,7 @@ import {
 	Lock,
 	User,
 } from "lucide-react";
-import imageUrl from "@/split/client/services/image.service";
+import imageUrl from "@client/services/image.service";
 import { format } from "date-fns";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { TestType } from "@/types";

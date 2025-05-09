@@ -1,5 +1,7 @@
 "use server";
 
+"use server";
+
 import sharp from "sharp";
 import { randomUUID } from "crypto";
 import "dotenv/config";

@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
-import { clientResetPassword } from "@/app/(root)/user/(auth)/auth-actions";
+import { clientResetPassword } from "@client/services/auth.service";
 
 // Define the form schema with password validation
 const formSchema = z

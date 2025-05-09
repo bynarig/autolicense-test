@@ -2,7 +2,7 @@
 
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { auth } from "@/app/(root)/user/(auth)/auth";
+import { auth } from "@server/config/auth-js";
 import { deleteImage } from "@/split/server/services/image.service";
 
 export async function POST(req: Request) {

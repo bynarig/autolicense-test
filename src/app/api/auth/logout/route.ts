@@ -1,7 +1,7 @@
 "use server";
 
 import { NextResponse } from "next/server";
-import { signOut } from "@/app/(root)/user/(auth)/auth";
+import { signOut } from "@server/config/auth-js";
 
 export async function POST() {
 	try {

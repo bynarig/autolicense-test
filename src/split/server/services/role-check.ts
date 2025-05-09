@@ -1,6 +1,6 @@
 "use server";
 
-import { auth } from "@/app/(root)/user/(auth)/auth";
+import { auth } from "@server/config/auth-js";
 
 export async function isAdmin() {
 	const sesion = await auth();

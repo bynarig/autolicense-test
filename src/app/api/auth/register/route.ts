@@ -1,6 +1,6 @@
 "use server";
 
-import { signIn } from "@/app/(root)/user/(auth)/auth";
+import { signIn } from "@server/config/auth-js";
 import { prisma } from "@/lib/db";
 import { Prisma } from "@prisma/client";
 import Bcrypt from "@/lib/bcrypt";

@@ -23,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { testValidationSchema } from "@/validators/zod";
-import { clientSignIn } from "@/app/(root)/user/(auth)/auth-actions";
+import { clientSignIn } from "@client/services/auth.service";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
 import { redirect, useParams } from "next/navigation";

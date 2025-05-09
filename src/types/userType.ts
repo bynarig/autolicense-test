@@ -1,23 +1,23 @@
-import { Role } from "@prisma/client";
-
 export interface UserType {
-	id: string;
-	email: string | null;
-	password?: string | null;
-	username: string | null;
-	name: string;
-	avatarUrl: string | null;
-	createdAt: Date;
-	updatedAt: Date | null;
-	deletedAt: Date | null;
-	lastLogin: Date | null;
-	resetToken?: string | null;
-	resetTokenExpiry?: Date | null;
-	twoFactorEnabled: boolean;
-	twoFactorSecret?: string | null;
-	emailVerified: boolean;
-	subscriptionLVL: number;
-	subscriptionType?: string | null;
-	subscriptionExpiresAt?: Date | null;
-	role: Role;
+	id?: string;
+	email?: string | undefined;
+	password?: string | undefined;
+	username?: string | undefined;
+	name?: string | undefined;
+	avatarUrl?: string | undefined;
+	createdAt?: Date;
+	updatedAt?: Date | undefined;
+	deletedAt?: Date | undefined;
+	lastLogin?: Date | undefined;
+	resetToken?: string | undefined;
+	resetTokenExpiry?: Date | undefined;
+	twoFactorEnabled?: boolean;
+	twoFactorSecret?: string | undefined;
+	emailVerified?: boolean;
+	subscriptionLVL?: number;
+	subscriptionType?: string | undefined;
+	subscriptionExpiresAt?: Date | undefined;
+	role?: UserRoleType | undefined;
 }
+
+export type UserRoleType = "UNAPPROVED" | "USER" | "ADMIN";

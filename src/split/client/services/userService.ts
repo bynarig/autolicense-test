@@ -2,10 +2,7 @@ import { toast } from "sonner";
 import { validateSearchInput } from "@/validators/validateSearchInput";
 import { fetchUsersServer } from "@/app/adminpanel/users/serverActions";
 import { UserType } from "@/types";
-import {
-	CACHE_EXPIRY,
-	manageCacheSize,
-} from "@/split/client/services/cache.service";
+import { CACHE_EXPIRY, manageCacheSize } from "@client/services/cache.service";
 
 // Cache for storing search results
 const searchCache = new Map<
@@ -120,7 +117,7 @@ export async function fetchUsers(
 			} else {
 				const json = await res.json();
 				toast(
-					`Failed to get users. err code: ${res.status} errmsg: ${json.error}`,
+					`Failed to get users. err code: ${res.status} err msg: ${json.error}`,
 				);
 				return { users: [], totalCount: 0 };
 			}

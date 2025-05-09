@@ -18,10 +18,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authSchema } from "@/validators/zod";
-import { clientRegister } from "@/app/(root)/user/(auth)/auth-actions";
 import { useSessionWrapper } from "@/context/session-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { clientSignIn } from "@client/services/auth.service";
 
 export default function Page() {
 	const { status, update } = useSessionWrapper();
@@ -33,6 +33,14 @@ export default function Page() {
 		}
 	}, [status, router]);
 
+	async function onSubmit(data: { email: string; password: string }) {
+		const res = await clientSignIn(data);
+
+		if (res.ok) {
+			await update();
+		}
+	}
+
 	const form = useForm<z.infer<typeof authSchema>>({
 		resolver: zodResolver(authSchema),
 		defaultValues: {
@@ -41,27 +49,16 @@ export default function Page() {
 		},
 	});
 
-	async function onSubmit(data: { email: string; password: string }) {
-		const res = await clientRegister(data);
-
-		if (res.ok) {
-			await update();
-		} else {
-			const errorData = await res.json();
-		}
-		// TODO: extend error handling
-	}
-
 	return (
 		<>
 			<Navbar />
-			<div className="flex justify-center h-140 mt-55">
+			<div className="flex items-center justify-center h-[calc(100vh-64px)]">
 				<Form {...form}>
 					<form
 						onSubmit={form.handleSubmit(onSubmit)}
 						className="space-y-8 "
 					>
-						<p className="text-2xl font-bold">Register</p>
+						<p className="text-2xl font-bold">Login</p>
 
 						<FormField
 							control={form.control}
@@ -94,17 +91,27 @@ export default function Page() {
 							)}
 						/>
 						<Button type="submit">Submit</Button>
-						<Button
-							type="button"
-							variant="link"
-							onClick={() => router.push("/user/login")}
-						>
-							login instead
-						</Button>
+						<div className="flex justify-between w-full">
+							<Button
+								type="button"
+								variant="link"
+								onClick={() => router.push("/user/register")}
+							>
+								register instead
+							</Button>
+							<Button
+								type="button"
+								variant="link"
+								onClick={() =>
+									router.push("/user/forgot-password")
+								}
+							>
+								forgot password?
+							</Button>
+						</div>
 					</form>
 				</Form>
 			</div>
-
 			<Footer />
 		</>
 	);

@@ -4,7 +4,7 @@ import React, { useCallback, useState } from "react";
 import { searchSchema } from "@/validators/zod";
 import { SearchForm } from "@/components/SearchForm";
 import { UsersTable } from "@/components/UsersTable";
-import { fetchUsers } from "@/app/adminpanel/users/userService";
+import { fetchUsers } from "@client/services/userService";
 import {
 	Pagination,
 	PaginationContent,

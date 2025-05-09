@@ -26,7 +26,7 @@ import {
 
 import { useSessionWrapper } from "@/context/session-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { clientSignOut } from "@/app/(root)/user/(auth)/auth-actions";
+import { clientSignOut } from "@client/services/auth.service";
 import { Button } from "@/components/ui/button";
 import imageUrl from "@/split/client/services/image.service";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -106,12 +106,12 @@ export default function Navbar() {
 						<NavigationMenu className="hidden md:flex">
 							<NavigationMenuList>
 								<NavigationMenuItem>
-									<Link href="/" legacyBehavior passHref>
-										<NavigationMenuLink
-											className={navigationMenuTriggerStyle()}
-										>
+									<Link href="/" passHref>
+										{/*<NavigationMenuLink*/}
+										{/*	className={navigationMenuTriggerStyle()}*/}
+										{/*>*/}
 											Home
-										</NavigationMenuLink>
+										{/*</NavigationMenuLink>*/}
 									</Link>
 								</NavigationMenuItem>
 
@@ -172,32 +172,24 @@ export default function Navbar() {
 								</NavigationMenuItem>
 
 								<NavigationMenuItem>
-									<Link
-										href="/feedback"
-										legacyBehavior
-										passHref
-									>
-										<NavigationMenuLink
-											className={navigationMenuTriggerStyle()}
-										>
+									<Link href="/feedback" passHref>
+										{/*<NavigationMenuLink*/}
+										{/*	className={navigationMenuTriggerStyle()}*/}
+										{/*>*/}
 											Feedback
-										</NavigationMenuLink>
+										{/*</NavigationMenuLink>*/}
 									</Link>
 								</NavigationMenuItem>
 
 								{status !== "loading" &&
 									session?.user.role === "ADMIN" && (
 										<NavigationMenuItem>
-											<Link
-												href="/adminpanel"
-												legacyBehavior
-												passHref
-											>
-												<NavigationMenuLink
-													className={navigationMenuTriggerStyle()}
-												>
+											<Link href="/adminpanel" passHref>
+												{/*<NavigationMenuLink */}
+												{/*	className={navigationMenuTriggerStyle()}*/}
+												{/*>*/}
 													Admin
-												</NavigationMenuLink>
+												{/*</NavigationMenuLink>*/}
 											</Link>
 										</NavigationMenuItem>
 									)}

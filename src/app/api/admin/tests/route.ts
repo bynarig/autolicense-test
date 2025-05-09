@@ -2,7 +2,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { auth } from "@/app/(root)/user/(auth)/auth";
+import { auth } from "@server/config/auth-js";
 import { isAdmin } from "@/split/server/services/role-check";
 
 export async function POST(req: NextRequest) {

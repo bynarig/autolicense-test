@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SearchForm } from "@/components/SearchForm";
-import { fetchQuestions } from "@/app/adminpanel/tests/questions/question.service";
+import { fetchQuestions } from "@client/services/question.service";
 import {
 	Pagination,
 	PaginationContent,

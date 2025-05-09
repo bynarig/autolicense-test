@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { clientRequestPasswordReset } from "@/app/(root)/user/(auth)/auth-actions";
+import { clientRequestPasswordReset } from "@client/services/auth.service";
 import { emailSchema } from "@/validators/zod";
 
 export default function ForgotPasswordPage() {

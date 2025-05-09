@@ -1,7 +1,7 @@
 "use server";
 
 import { NextRequest, NextResponse } from "next/server";
-import { signIn } from "@/app/(root)/user/(auth)/auth";
+import { signIn } from "@server/config/auth-js";
 import { prisma } from "@/lib/db";
 import Bcrypt from "@/lib/bcrypt";
 
