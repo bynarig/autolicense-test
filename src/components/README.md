@@ -1,6 +1,7 @@
 # Reusable Components
 
-This directory contains reusable components that can be used across the application. Below is a description of each component and how to use it.
+This directory contains reusable components that can be used across the application. Below is a description of each
+component and how to use it.
 
 ## Components
 

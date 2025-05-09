@@ -61,12 +61,14 @@ function Calendar({
 				...classNames,
 			}}
 			components={{
+				//@ts-expect-error Idk why generated component is not in type
 				IconLeft: ({ className, ...props }) => (
 					<ChevronLeft
 						className={cn("size-4", className)}
 						{...props}
 					/>
 				),
+				//@ts-expect-error Idk why generated component is not in type
 				IconRight: ({ className, ...props }) => (
 					<ChevronRight
 						className={cn("size-4", className)}

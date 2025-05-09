@@ -6,7 +6,6 @@ import { isAdmin } from "@/split/server/services/role-check";
 
 type tParams = Promise<{ id: string }>;
 
-// Corrected GET function signature
 export async function GET(req: Request, { params }: { params: tParams }) {
 	try {
 		if (!(await isAdmin())) {

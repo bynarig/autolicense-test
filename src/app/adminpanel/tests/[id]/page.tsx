@@ -44,6 +44,7 @@ export default function Page() {
 			// console.error("Login failed:", errorData.error)
 		}
 	}
+
 	async function onTestDelete() {
 		const id = params.id;
 		const res = await fetch(`/api/admin/tests/${id}`, {

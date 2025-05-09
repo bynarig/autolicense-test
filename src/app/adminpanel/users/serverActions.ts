@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/db";
-import { validateSearchInput } from "@/lib/validateSearchInput";
+import { validateSearchInput } from "@/validators/validateSearchInput";
 
 /**
  * Server action to fetch users with caching
