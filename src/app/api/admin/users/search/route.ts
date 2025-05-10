@@ -2,14 +2,18 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { UserMiddleware } from "@server/middleware/user.middleware";
 
 export async function POST(req: NextRequest) {
+	const middlewareCheck = await UserMiddleware.RequireAdmin(req);
+	if (middlewareCheck) return middlewareCheck;
 	try {
 		const { data, inputType, pagination } = await req.json();
 		const input = data?.search || "";
 
 		// Default pagination values
-		const page = pagination?.page || 1;
+		//const page = pagination?.page || 1;
+		const page = 1;
 		const limit = pagination?.limit || 10;
 		const skip = (page - 1) * limit;
 

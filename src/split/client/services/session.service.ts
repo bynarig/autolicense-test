@@ -1,5 +1,7 @@
+"use client";
+
 import { getSession } from "next-auth/react";
 
-export async function getSessionWrapper() {
-	return await getSession();
+export function getSessionWrapper() {
+	return getSession();
 }

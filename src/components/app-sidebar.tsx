@@ -28,8 +28,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Link from "next/link";
 import { clientSignOut } from "@client/services/auth.service";
-import { useSessionWrapper } from "@/context/session-context";
+import { useSessionWrapper } from "@/components/context/session-context";
 import { Suspense } from "react";
+import { useUserStore } from "@client/store/userStore";
 
 // Menu items.
 const items = [
@@ -71,71 +72,59 @@ const items = [
 ];
 
 export function AppSidebar() {
-	const { data: session } = useSessionWrapper();
-
+	const userStore = useUserStore();
 	return (
 		<>
-			{session && session.user ? (
-				<Suspense fallback={<div>Loading...</div>}>
-					<Sidebar>
-						<SidebarContent>
-							<SidebarGroup>
-								<SidebarGroupLabel>
-									Application
-								</SidebarGroupLabel>
-								<SidebarGroupContent>
-									<SidebarMenu>
-										{items.map((item) => (
-											<SidebarMenuItem key={item.title}>
-												<SidebarMenuButton asChild>
-													<Link href={item.url}>
-														<item.icon />
-														<span>
-															{item.title}
-														</span>
-													</Link>
-												</SidebarMenuButton>
-											</SidebarMenuItem>
-										))}
-									</SidebarMenu>
-								</SidebarGroupContent>
-							</SidebarGroup>
-						</SidebarContent>
-						<SidebarFooter>
+			<Sidebar>
+				<SidebarContent>
+					<SidebarGroup>
+						<SidebarGroupLabel>Application</SidebarGroupLabel>
+						<SidebarGroupContent>
 							<SidebarMenu>
-								<SidebarMenuItem>
-									<DropdownMenu>
-										<DropdownMenuTrigger asChild>
-											<SidebarMenuButton>
-												<User2 />{" "}
-												{session?.user.name || "Admin"}
-												<ChevronUp className="ml-auto" />
-											</SidebarMenuButton>
-										</DropdownMenuTrigger>
-										<DropdownMenuContent
-											side="top"
-											className="w-[--radix-popper-anchor-width]"
-										>
-											<DropdownMenuItem>
-												<Link href="/user/profile">
-													Account
-												</Link>
-											</DropdownMenuItem>
-											<DropdownMenuItem
-												onClick={() => clientSignOut()}
-											>
-												Sign out
-											</DropdownMenuItem>
-										</DropdownMenuContent>
-									</DropdownMenu>
-								</SidebarMenuItem>
+								{items.map((item) => (
+									<SidebarMenuItem key={item.title}>
+										<SidebarMenuButton asChild>
+											<Link href={item.url}>
+												<item.icon />
+												<span>{item.title}</span>
+											</Link>
+										</SidebarMenuButton>
+									</SidebarMenuItem>
+								))}
 							</SidebarMenu>
-						</SidebarFooter>
-					</Sidebar>
-				</Suspense>
-			) : (
-				<div>login to view info</div>
-			)}
+						</SidebarGroupContent>
+					</SidebarGroup>
+				</SidebarContent>
+				<SidebarFooter>
+					<SidebarMenu>
+						<SidebarMenuItem>
+							<DropdownMenu>
+								<DropdownMenuTrigger asChild>
+									<SidebarMenuButton>
+										<User2 /> {userStore.name || "Admin"}
+										<ChevronUp className="ml-auto" />
+									</SidebarMenuButton>
+								</DropdownMenuTrigger>
+								<DropdownMenuContent
+									side="top"
+									className="w-[--radix-popper-anchor-width]"
+								>
+									<DropdownMenuItem>
+										<Link href="/user/profile">
+											Account
+										</Link>
+									</DropdownMenuItem>
+									<DropdownMenuItem
+										onClick={() => clientSignOut()}
+									>
+										Sign out
+									</DropdownMenuItem>
+								</DropdownMenuContent>
+							</DropdownMenu>
+						</SidebarMenuItem>
+					</SidebarMenu>
+				</SidebarFooter>
+			</Sidebar>
 		</>
 	);
 }

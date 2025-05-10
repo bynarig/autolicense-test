@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useSessionWrapper } from "@/context/session-context";
+import { useSessionWrapper } from "@/components/context/session-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { z } from "zod";

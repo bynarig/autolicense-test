@@ -1,5 +1,3 @@
-"use server";
-
 export enum ErrorCode {
 	// Authentication Errors (1xxx)
 	UNAUTHORIZED = "ERR_1001",

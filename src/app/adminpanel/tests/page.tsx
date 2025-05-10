@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/table";
 import { ArrowDownIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import ClipboardJS from "clipboard";
 import {
 	Dialog,
 	DialogContent,
@@ -28,15 +27,8 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SearchForm } from "@/components/SearchForm";
-import { fetchTests } from "@client/services/testService";
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from "@/components/ui/pagination";
+import Pagination from "@/components/Pagination";
+import { getTests } from "@client/services/admin/testing.service";
 
 export default function Page() {
 	const [tests, setTests] = useState<any[]>([]);
@@ -47,31 +39,10 @@ export default function Page() {
 	const initialLoadDone = useRef(false);
 	const itemsPerPage = 50;
 
-	React.useEffect(() => {
-		const clipboard = new ClipboardJS(".copy-btn", {
-			text: function (trigger) {
-				return trigger.getAttribute("data-clipboard-text") || "";
-			},
-		});
-
-		clipboard.on("success", function (e) {
-			toast.success(`Copied: ${e.text}`);
-			e.clearSelection();
-		});
-
-		clipboard.on("error", function (e) {
-			toast.error("Failed to copy text");
-		});
-
-		return () => {
-			clipboard.destroy();
-		};
-	}, []);
-
 	const handleSearch = useCallback(async (term: string) => {
 		setSearchTerm(term);
 		setCurrentPage(1); // Reset to first page on new search
-		const result = await fetchTests(term, 1, itemsPerPage);
+		const result = await getTests();
 		setTests(result.tests);
 		setTotalCount(result.totalCount);
 	}, []);
@@ -79,7 +50,7 @@ export default function Page() {
 	const handlePageChange = useCallback(
 		async (page: number) => {
 			setCurrentPage(page);
-			const result = await fetchTests(searchTerm, page, itemsPerPage);
+			const result = await getTests();
 			setTests(result.tests);
 			setTotalCount(result.totalCount);
 		},
@@ -94,10 +65,10 @@ export default function Page() {
 		}
 	});
 
-	async function onTestCreate(data: { testName: string }) {
+	async function onTestCreate() {
 		const res = await fetch("/api/admin/tests", {
-			method: "POST",
-			body: JSON.stringify(data),
+			method: "GET",
+			// body: JSON.stringify(data),
 			headers: { "Content-Type": "application/json" },
 		});
 		if (res.status === 200) {
@@ -112,7 +83,7 @@ export default function Page() {
 		} else {
 			const json = await res.json();
 			toast(
-				`Failed to create test. err code: ${res.status} errmsg: ${json.error} data sended ${data.testName}`,
+				`Failed to create test. err code: ${res.status} errmsg: ${json.error} data sended `,
 			);
 		}
 	}
@@ -210,7 +181,7 @@ export default function Page() {
 										) as HTMLInputElement
 									)?.value;
 									if (inputValue) {
-										onTestCreate({ testName: inputValue });
+										// onTestCreate({ testName: inputValue });
 										setDialogOpen(false);
 									}
 								}}
@@ -327,55 +298,12 @@ export default function Page() {
 				</TableBody>
 			</Table>
 
-			{totalPages > 1 && (
-				<Pagination>
-					<PaginationContent>
-						<PaginationItem>
-							<PaginationPrevious
-								onClick={() =>
-									currentPage > 1 &&
-									handlePageChange(currentPage - 1)
-								}
-								className={
-									currentPage === 1
-										? "pointer-events-none opacity-50"
-										: "cursor-pointer"
-								}
-							/>
-						</PaginationItem>
-
-						{getPageNumbers().map((page, index) => (
-							<PaginationItem key={index}>
-								{page === -1 ? (
-									<span className="px-4">...</span>
-								) : (
-									<PaginationLink
-										onClick={() => handlePageChange(page)}
-										isActive={page === currentPage}
-										className="cursor-pointer"
-									>
-										{page}
-									</PaginationLink>
-								)}
-							</PaginationItem>
-						))}
-
-						<PaginationItem>
-							<PaginationNext
-								onClick={() =>
-									currentPage < totalPages &&
-									handlePageChange(currentPage + 1)
-								}
-								className={
-									currentPage === totalPages
-										? "pointer-events-none opacity-50"
-										: "cursor-pointer"
-								}
-							/>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
-			)}
+			<Pagination
+				currentPage={currentPage}
+				onPageChange={handlePageChange}
+				itemsPerPage={itemsPerPage}
+				totalCount={totalCount as number}
+			/>
 		</div>
 	);
 }

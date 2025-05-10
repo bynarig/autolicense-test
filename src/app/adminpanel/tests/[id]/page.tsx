@@ -23,47 +23,42 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { testValidationSchema } from "@/validators/zod";
-import { clientSignIn } from "@client/services/auth.service";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { redirect, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { deleteTest, getTest } from "@client/services/admin/testing.service";
 
 export default function Page() {
 	const params = useParams();
 	const [testData, setTestData] = useState<any>(null);
-
-	async function onUpdateTestData(data: { email: string; password: string }) {
-		const res = await clientSignIn(data);
-
-		if (res.ok) {
-			// await update(); // Force session update
-			// The useEffect will handle the redirect automatically
-		} else {
-			const errorData = await res.json();
-			// Handle error display to user
-			// console.error("Login failed:", errorData.error)
-		}
-	}
+	const router = useRouter();
 
 	async function onTestDelete() {
 		const id = params.id;
-		const res = await fetch(`/api/admin/tests/${id}`, {
-			method: "DELETE",
-			headers: { "Content-Type": "application/json" },
-		});
-		if (res.status === 200) {
-			const json = await res.json();
-			redirect("/adminpanel/tests");
-			// setTestData(json.data);
-			toast(`Test id:${id} deleted.`);
+		const res = await deleteTest(id as string);
+		if (res.success) {
+			router.push("/adminpanel/tests");
 		} else {
-			// setTestData([]);
-			const json = await res.json();
 			toast(
-				`Failed to delete test. err code: ${res.status} errmsg: ${json.error}`,
+				`Failed to delete test. err code: ${res.status} errmsg: ${res.error}`,
 			);
 		}
 	}
+	const onTestFetch = useCallback(async () => {
+		const id = params.id;
+		const res = await getTest(id as string);
+		if (res.success) {
+			setTestData(res.data);
+		} else {
+			toast(
+				`Failed to get test. err code: ${res.status} errmsg: ${res.error}`,
+			);
+		}
+	}, []);
+
+	React.useEffect(() => {
+		onTestFetch();
+	}, []);
 
 	const form = useForm<z.infer<typeof testValidationSchema>>({
 		defaultValues: {
@@ -78,29 +73,6 @@ export default function Page() {
 			});
 		}
 	}, [testData, form]);
-
-	const getTestData = useCallback(async () => {
-		const id = params.id;
-		const res = await fetch(`/api/admin/tests/${id}`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-		});
-		if (res.status === 200) {
-			const json = await res.json();
-			setTestData(json.data);
-			toast(`Test id:${id} fetched.`);
-		} else {
-			setTestData([]);
-			const json = await res.json();
-			toast(
-				`Failed to get test. err code: ${res.status} errmsg: ${json.error}`,
-			);
-		}
-	}, [params.id]);
-
-	React.useEffect(() => {
-		getTestData();
-	}, [getTestData]);
 
 	return (
 		<>

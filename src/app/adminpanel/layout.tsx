@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../globals.css";
-import { SessionProviderWrapper } from "@/context/session-context";
+import { SessionProviderWrapper } from "@/components/context/session-context";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
-import AdminStrict from "@/components/admin-strict";
 import { ModeToggle } from "@/components/ModeToggle";
 
 const geistSans = Geist({
@@ -53,7 +52,6 @@ export default function RootLayout({
 				disableTransitionOnChange
 			>
 				<SessionProviderWrapper>
-					<AdminStrict />
 					<SidebarProvider>
 						<AppSidebar />
 						<SidebarTrigger />

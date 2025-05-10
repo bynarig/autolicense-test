@@ -1,17 +1,15 @@
 "use server";
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { isAdmin } from "@/split/server/services/role-check";
+import { UserMiddleware } from "@server/middleware/user.middleware";
 
 type tParams = Promise<{ id: string }>;
 
-export async function GET(req: Request, { params }: { params: tParams }) {
+export async function GET(req: NextRequest, { params }: { params: tParams }) {
+	const middlewareCheck = await UserMiddleware.RequireAdmin(req);
+	if (middlewareCheck) return middlewareCheck;
 	try {
-		if (!(await isAdmin())) {
-			return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-		}
-
 		const { id }: { id: string } = await params;
 
 		if (!id) {
@@ -57,70 +55,56 @@ export async function GET(req: Request, { params }: { params: tParams }) {
 	}
 }
 
-export async function PUT(req: Request, { params }: { params: tParams }) {
-	try {
-		if (await isAdmin()) {
-			const { id }: { id: string } = await params;
-			const body = await req.json();
-			const { title, imageUrl, text, points, category } = body;
+export async function PUT(req: NextRequest, { params }: { params: tParams }) {
+	const middlewareCheck = await UserMiddleware.RequireAdmin(req);
+	if (middlewareCheck) return middlewareCheck;
 
-			// Prepare update data
-			const updateData: any = {};
-			if (title !== undefined) updateData.title = title;
-			if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
-			if (text !== undefined) updateData.text = text;
-			if (points !== undefined) updateData.points = parseInt(points);
-			// if (category !== undefined) updateData.category = [category];
-			console.log(updateData);
-			// Add updatedAt timestamp using Prisma's update operation
-			const response = await prisma.question.update({
-				where: {
-					id: id,
-				},
-				data: {
-					...updateData,
-					updatedAt: new Date(),
-				},
-			});
+	const { id }: { id: string } = await params;
+	const body = await req.json();
+	const { title, imageUrl, text, points, category } = body;
 
-			return NextResponse.json(
-				{ success: true, data: response },
-				{ status: 200 },
-			);
-		} else {
-			return NextResponse.json({ error: "No access" }, { status: 403 });
-		}
-	} catch (error) {
-		console.error("Error updating question:", error);
-		return NextResponse.json(
-			{ error: "Invalid request", detail: (error as Error).message },
-			{ status: 400 },
-		);
-	}
+	// Prepare update data
+	const updateData: any = {};
+	if (title !== undefined) updateData.title = title;
+	if (imageUrl !== undefined) updateData.imageUrl = imageUrl;
+	if (text !== undefined) updateData.text = text;
+	if (points !== undefined) updateData.points = parseInt(points);
+	// if (category !== undefined) updateData.category = [category];
+	console.log(updateData);
+	// Add updatedAt timestamp using Prisma's update operation
+	const response = await prisma.question.update({
+		where: {
+			id: id,
+		},
+		data: {
+			...updateData,
+			updatedAt: new Date(),
+		},
+	});
+
+	return NextResponse.json(
+		{ success: true, data: response },
+		{ status: 200 },
+	);
 }
 
-export async function DELETE(req: Request, { params }: { params: tParams }) {
-	try {
-		if (await isAdmin()) {
-			const { id }: { id: string } = await params;
+export async function DELETE(
+	req: NextRequest,
+	{ params }: { params: tParams },
+) {
+	const middlewareCheck = await UserMiddleware.RequireAdmin(req);
+	if (middlewareCheck) return middlewareCheck;
 
-			const response = await prisma.question.delete({
-				where: {
-					id: id,
-				},
-			});
+	const { id }: { id: string } = await params;
 
-			return NextResponse.json(
-				{ success: true, data: response },
-				{ status: 200 },
-			);
-		} else {
-			return NextResponse.json({ error: "No access" }, { status: 403 });
-		}
-	} catch (error) {
-		return NextResponse.json(
-			{ error: "Invalid request", detail: (error as Error).message },
-			{ status: 400 },
-		);
-	}
+	const response = await prisma.question.delete({
+		where: {
+			id: id,
+		},
+	});
+
+	return NextResponse.json(
+		{ success: true, data: response },
+		{ status: 200 },
+	);
 }

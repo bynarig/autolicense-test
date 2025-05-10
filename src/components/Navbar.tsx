@@ -12,7 +12,6 @@ import {
 	NavigationMenuLink,
 	NavigationMenuList,
 	NavigationMenuTrigger,
-	navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 
 import {
@@ -24,7 +23,7 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import { useSessionWrapper } from "@/context/session-context";
+import { useSessionWrapper } from "@/components/context/session-context";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { clientSignOut } from "@client/services/auth.service";
 import { Button } from "@/components/ui/button";
@@ -32,6 +31,7 @@ import imageUrl from "@/split/client/services/image.service";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ModeToggle } from "@/components/ModeToggle";
 import LanguageSwitch from "@/components/languageSwitch";
+import { useUserStore } from "@client/store/userStore";
 
 export const components: {
 	title: string;
@@ -76,7 +76,8 @@ export const components: {
 ];
 
 export default function Navbar() {
-	const { data: session, status, avatarUrl } = useSessionWrapper();
+	const userStore = useUserStore();
+	const isSignedUp = userStore.isSignedUp;
 	const isMobile = useIsMobile();
 	const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
@@ -110,7 +111,7 @@ export default function Navbar() {
 										{/*<NavigationMenuLink*/}
 										{/*	className={navigationMenuTriggerStyle()}*/}
 										{/*>*/}
-											Home
+										Home
 										{/*</NavigationMenuLink>*/}
 									</Link>
 								</NavigationMenuItem>
@@ -176,23 +177,22 @@ export default function Navbar() {
 										{/*<NavigationMenuLink*/}
 										{/*	className={navigationMenuTriggerStyle()}*/}
 										{/*>*/}
-											Feedback
+										Feedback
 										{/*</NavigationMenuLink>*/}
 									</Link>
 								</NavigationMenuItem>
 
-								{status !== "loading" &&
-									session?.user.role === "ADMIN" && (
-										<NavigationMenuItem>
-											<Link href="/adminpanel" passHref>
-												{/*<NavigationMenuLink */}
-												{/*	className={navigationMenuTriggerStyle()}*/}
-												{/*>*/}
-													Admin
-												{/*</NavigationMenuLink>*/}
-											</Link>
-										</NavigationMenuItem>
-									)}
+								{userStore?.role === "ADMIN" && (
+									<NavigationMenuItem>
+										<Link href="/adminpanel" passHref>
+											{/*<NavigationMenuLink */}
+											{/*	className={navigationMenuTriggerStyle()}*/}
+											{/*>*/}
+											Admin
+											{/*</NavigationMenuLink>*/}
+										</Link>
+									</NavigationMenuItem>
+								)}
 							</NavigationMenuList>
 						</NavigationMenu>
 					)}
@@ -209,27 +209,24 @@ export default function Navbar() {
 							<LanguageSwitch />
 						</div>
 
-						{status === "loading" ? (
-							<div className="h-8 w-8 rounded-full bg-muted animate-pulse"></div>
-						) : session ? (
+						{isSignedUp ? (
 							<DropdownMenu>
 								<DropdownMenuTrigger className="focus:outline-none">
 									<Avatar className="h-8 w-8 transition-transform hover:scale-105">
-										<AvatarImage
-											src={
-												avatarUrl ||
-												(session?.user?.avatarUrl
-													? imageUrl.getImageUrl(
-															session.user
-																.avatarUrl,
-														)
-													: "https://avatars.githubusercontent.com/u/124599?v=4")
-											}
-											alt={session.user.name || "User"}
-										/>
+										{/*<AvatarImage*/}
+										{/*	src={*/}
+										{/*		userStore.avatarUrl ||*/}
+										{/*		(userStore.avatarUrl*/}
+										{/*			? imageUrl.getImageUrl(*/}
+										{/*					userStore*/}
+										{/*						.avatarUrl,*/}
+										{/*				)*/}
+										{/*			: "https://avatars.githubusercontent.com/u/124599?v=4")*/}
+										{/*	}*/}
+										{/*	alt={userStore.name || "User"}*/}
+										{/*/>*/}
 										<AvatarFallback>
-											{session.user.name?.charAt(0) ||
-												"U"}
+											{userStore.name?.charAt(0) || "U"}
 										</AvatarFallback>
 									</Avatar>
 								</DropdownMenuTrigger>
@@ -343,16 +340,15 @@ export default function Navbar() {
 							Feedback
 						</Link>
 
-						{status !== "loading" &&
-							session?.user.role === "ADMIN" && (
-								<Link
-									href="/adminpanel"
-									className="block py-2 px-3 text-foreground hover:bg-primary/10 rounded-md"
-									onClick={() => setMobileMenuOpen(false)}
-								>
-									Admin Panel
-								</Link>
-							)}
+						{status !== "loading" && userStore.role === "ADMIN" && (
+							<Link
+								href="/adminpanel"
+								className="block py-2 px-3 text-foreground hover:bg-primary/10 rounded-md"
+								onClick={() => setMobileMenuOpen(false)}
+							>
+								Admin Panel
+							</Link>
+						)}
 
 						{/* Theme and Language Controls for Mobile */}
 						<div className="py-2 px-3 space-y-4 mt-4 border-t border-border/40 pt-4">

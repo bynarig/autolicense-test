@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/table";
 import { ArrowDownIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
-import ClipboardJS from "clipboard";
 import {
 	Dialog,
 	DialogContent,
@@ -28,51 +27,30 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { SearchForm } from "@/components/SearchForm";
-import { fetchQuestions } from "@client/services/question.service";
+import Pagination from "@/components/Pagination";
+import { QuestionType } from "@/types";
 import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from "@/components/ui/pagination";
+	createQuestion,
+	getQuestions,
+} from "@client/services/admin/question.service";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
-	const [questions, setQuestions] = useState<any[]>([]);
+	const [questions, setQuestions] = useState<QuestionType[]>([]);
 	const [totalCount, setTotalCount] = useState<number>(0);
 	const [currentPage, setCurrentPage] = useState<number>(1);
 	const [searchTerm, setSearchTerm] = useState<string>("");
 	const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 	const [isUploading, setIsUploading] = useState<boolean>(false);
-	const initialLoadDone = useRef(false);
+
 	const itemsPerPage = 50;
 
-	React.useEffect(() => {
-		const clipboard = new ClipboardJS(".copy-btn", {
-			text: function (trigger) {
-				return trigger.getAttribute("data-clipboard-text") || "";
-			},
-		});
-
-		clipboard.on("success", function (e) {
-			toast.success(`Copied: ${e.text}`);
-			e.clearSelection();
-		});
-
-		clipboard.on("error", function (e) {
-			toast.error("Failed to copy text");
-		});
-
-		return () => {
-			clipboard.destroy();
-		};
-	}, []);
+	const router = useRouter();
 
 	const handleSearch = useCallback(async (term: string) => {
 		setSearchTerm(term);
-		setCurrentPage(1); // Reset to first page on new search
-		const result = await fetchQuestions(term, 1, itemsPerPage);
+		setCurrentPage(1);
+		const result = await getQuestions();
 		setQuestions(result.questions);
 		setTotalCount(result.totalCount);
 	}, []);
@@ -80,43 +58,23 @@ export default function Page() {
 	const handlePageChange = useCallback(
 		async (page: number) => {
 			setCurrentPage(page);
-			const result = await fetchQuestions(searchTerm, page, itemsPerPage);
+			const result = await getQuestions();
 			setQuestions(result.questions);
 			setTotalCount(result.totalCount);
 		},
 		[searchTerm],
 	);
 
-	// Initial data load
-	React.useEffect(() => {
-		if (!initialLoadDone.current) {
-			handleSearch("");
-			initialLoadDone.current = true;
-		}
-	});
-
 	async function onQuestionCreate(data: {
 		questionName: string;
 		imageUrl?: string | null;
 	}) {
-		const res = await fetch("/api/admin/tests/questions", {
-			method: "POST",
-			body: JSON.stringify(data),
-			headers: { "Content-Type": "application/json" },
-		});
+		const res = await createQuestion(data);
 		if (res.status === 200) {
-			const json = await res.json();
-			// Update questions array by adding the new question
-			setQuestions((prevQuestions) => [...prevQuestions, json.data]);
-			// Or refetch all questions
-			// onSubmit({ search: "" });
-			toast("Question successfully created.");
-			// Redirect to the question page
-			window.location.href = `/adminpanel/tests/questions/${json.data.id}`;
+			router.push(`/adminpanel/tests/questions/${res.data.data.id}`);
 		} else {
-			const json = await res.json();
 			toast(
-				`Failed to create question. err code: ${res.status} errmsg: ${json.error} data sended ${data.questionName}`,
+				`Failed to create question. err code: ${res.status} errmsg: ${res.data.error} data sended ${data.questionName}`,
 			);
 		}
 	}
@@ -339,10 +297,10 @@ export default function Page() {
 										variant="ghost"
 										className="copy-btn"
 										data-clipboard-text={
-											question.timeCompleted || "no data"
+											question.attempts || "no data"
 										}
 									>
-										{question.timeCompleted || "no data"}
+										{question.attempts || "no data"}
 									</Button>
 								</TableCell>
 							</TableRow>
@@ -350,56 +308,12 @@ export default function Page() {
 					)}
 				</TableBody>
 			</Table>
-
-			{totalPages > 1 && (
-				<Pagination>
-					<PaginationContent>
-						<PaginationItem>
-							<PaginationPrevious
-								onClick={() =>
-									currentPage > 1 &&
-									handlePageChange(currentPage - 1)
-								}
-								className={
-									currentPage === 1
-										? "pointer-events-none opacity-50"
-										: "cursor-pointer"
-								}
-							/>
-						</PaginationItem>
-
-						{getPageNumbers().map((page, index) => (
-							<PaginationItem key={index}>
-								{page === -1 ? (
-									<span className="px-4">...</span>
-								) : (
-									<PaginationLink
-										onClick={() => handlePageChange(page)}
-										isActive={page === currentPage}
-										className="cursor-pointer"
-									>
-										{page}
-									</PaginationLink>
-								)}
-							</PaginationItem>
-						))}
-
-						<PaginationItem>
-							<PaginationNext
-								onClick={() =>
-									currentPage < totalPages &&
-									handlePageChange(currentPage + 1)
-								}
-								className={
-									currentPage === totalPages
-										? "pointer-events-none opacity-50"
-										: "cursor-pointer"
-								}
-							/>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
-			)}
+			<Pagination
+				currentPage={currentPage}
+				onPageChange={handlePageChange}
+				itemsPerPage={itemsPerPage}
+				totalCount={totalCount as number}
+			/>
 		</div>
 	);
 }

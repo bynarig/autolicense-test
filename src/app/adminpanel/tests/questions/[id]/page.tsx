@@ -25,9 +25,8 @@ import { z } from "zod";
 import { testValidationSchema } from "@/validators/zod";
 import React, { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { redirect, useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import ImageUploader from "@/components/ImageUploader";
-import { uploadImage } from "@/split/client/services/image.service";
 import { Textarea } from "@/components/ui/textarea";
 import {
 	Select,
@@ -39,6 +38,11 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { QuestionType } from "@/types/test-sysType";
 import { toPrettyDate } from "@/lib/date";
+import {
+	deleteQuestion,
+	getQuestion,
+	updateQuestion,
+} from "@client/services/admin/question.service";
 
 const category = [
 	{ value: "1", label: "1" },
@@ -52,80 +56,64 @@ export default function Page() {
 	const [selectedImage, setSelectedImage] = useState<File | null>(null);
 	const [isUploading, setIsUploading] = useState<boolean>(false);
 
+	const router = useRouter();
+
 	const handleImageSelect = (file: File) => {
 		setSelectedImage(file);
 	};
 
-	async function onUpdateQuestionData(data: {
-		imageUrl: any;
-		name: string;
-		points: number;
-		text: string;
-		category: string;
-	}) {
+	async function onQuestionUpdate(data: Partial<QuestionType>) {
 		const id = params.id;
 		setIsUploading(true);
 
-		try {
-			let imageUrl = data.imageUrl;
-
-			if (selectedImage) {
-				imageUrl = await uploadImage(selectedImage);
-			}
-
-			const res = await fetch(`/api/admin/tests/questions/${id}`, {
-				method: "PUT",
-				body: JSON.stringify({
-					title: data.name,
-					points: data.points,
-					text: data.text,
-					category: data.category,
-					imageUrl: imageUrl,
-				}),
-				headers: { "Content-Type": "application/json" },
-			});
-
-			if (res.status === 200) {
-				const json = await res.json();
-				setQuestionData(json.data);
-				toast.success("Question updated successfully");
-			} else {
-				const json = await res.json();
-				toast.error(`Failed to update question. Error: ${json.error}`);
-			}
-		} catch (error) {
-			console.error("Error updating question:", error);
-			toast.error("Failed to update question");
-		} finally {
-			setIsUploading(false);
+		// let imageUrl = data.imageUrl;
+		//
+		// if (selectedImage) {
+		// 	imageUrl = await uploadImage(selectedImage);
+		// }
+		const res = await updateQuestion(data, id as string);
+		if (res.success) {
+			setQuestionData(res.data);
+		} else {
+			toast.error(`Failed to update question. Error: ${res.error}`);
 		}
+
+		setIsUploading(false);
 	}
 
 	async function onQuestionDelete() {
 		const id = params.id;
-		const res = await fetch(`/api/admin/tests/questions/${id}`, {
-			method: "DELETE",
-			headers: { "Content-Type": "application/json" },
-		});
-		if (res.status === 200) {
-			const json = await res.json();
-			redirect("/adminpanel/tests/questions");
-			toast(`Question id:${id} deleted.`);
+		const res = await deleteQuestion(id as string);
+		if (res.success) {
+			router.push("/adminpanel/tests/questions");
 		} else {
-			// setTestData([]);
-			const json = await res.json();
 			toast(
-				`Failed to delete question. err code: ${res.status} errmsg: ${json.error}`,
+				`Failed to delete question. err code: ${res.status} errmsg: ${res.error}`,
 			);
 		}
 	}
 
+	const onQuestionFetch = useCallback(async () => {
+		const id = params.id;
+		const res = await getQuestion(id as string);
+		if (res.success) {
+			setQuestionData(res.data);
+		} else {
+			toast(
+				`Failed to get users. err code: ${res.status} errmsg: ${res.error}`,
+			);
+		}
+	}, [params.id]);
+
+	React.useEffect(() => {
+		onQuestionFetch();
+	}, []);
+
 	const form = useForm<z.infer<typeof testValidationSchema>>({
 		defaultValues: {
-			name: "",
+			title: "",
 			text: "",
 			points: 1,
-			// category: [""],
 		},
 	});
 
@@ -138,28 +126,6 @@ export default function Page() {
 			});
 		}
 	}, [questionData, form]);
-
-	const getquestionData = useCallback(async () => {
-		const id = params.id;
-		const res = await fetch(`/api/admin/tests/questions/${id}`, {
-			method: "GET",
-			headers: { "Content-Type": "application/json" },
-		});
-		if (res.status === 200) {
-			const json = await res.json();
-			setQuestionData(json.data);
-			toast(`question id:${id} fetched.`);
-		} else {
-			const json = await res.json();
-			toast(
-				`Failed to get users. err code: ${res.status} errmsg: ${json.error}`,
-			);
-		}
-	}, [params.id]);
-
-	React.useEffect(() => {
-		getquestionData();
-	}, [getquestionData]);
 
 	return (
 		<>
@@ -186,11 +152,12 @@ export default function Page() {
 							<form
 								id="question-form"
 								onSubmit={form.handleSubmit((data) =>
-									onUpdateQuestionData({
-										name: data.name,
+									onQuestionUpdate({
+										title: data.title,
 										text: data.text,
 										points: data.points,
-										category: data.category,
+
+										category: [data.category],
 										imageUrl: questionData?.imageUrl,
 									}),
 								)}
@@ -199,11 +166,11 @@ export default function Page() {
 								<div className="flex flex-col space-y-4">
 									<FormField
 										control={form.control}
-										name="name"
+										name="title"
 										render={({ field }) => (
 											<FormItem>
 												<FormLabel>
-													Question Name
+													Question title
 												</FormLabel>
 												<FormControl>
 													<Input

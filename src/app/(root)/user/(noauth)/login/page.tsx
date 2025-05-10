@@ -18,27 +18,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authSchema } from "@/validators/zod";
-import { useSessionWrapper } from "@/context/session-context";
+import { useSessionWrapper } from "@/components/context/session-context";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { clientSignIn } from "@client/services/auth.service";
 
 export default function Page() {
-	const { status, update } = useSessionWrapper();
 	const router = useRouter();
 
-	useEffect(() => {
-		if (status === "authenticated") {
-			router.push("/");
-		}
-	}, [status, router]);
-
 	async function onSubmit(data: { email: string; password: string }) {
-		const res = await clientSignIn(data);
-
-		if (res.ok) {
-			await update();
-		}
+		await clientSignIn(data);
 	}
 
 	const form = useForm<z.infer<typeof authSchema>>({

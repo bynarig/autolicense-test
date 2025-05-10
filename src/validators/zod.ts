@@ -17,6 +17,7 @@ export const searchSchema = z.object({
 
 export const testValidationSchema = z.object({
 	name: z.string(),
+	title: z.string(),
 	username: z.string(),
 	text: z.string(),
 	points: z.number().min(1),

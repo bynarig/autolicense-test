@@ -1,5 +1,3 @@
-"use server";
-
 import { z } from "zod";
 import "dotenv/config";
 
@@ -40,9 +38,11 @@ const envSchema = z.object({
 			: z.string(),
 });
 
-export const ENV = async () => {
-	return envSchema.parseAsync(process.env);
-};
+export const ENV = envSchema.parse(process.env);
+
+// export const ENV = async () => {
+// 	return envSchema.parseAsync(process.env);
+// };
 
 // Add validation for production environment
 if (process.env.NODE_ENV === "production") {

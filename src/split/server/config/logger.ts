@@ -21,7 +21,7 @@ const transports: winston.transport[] = [
 	}),
 ];
 
-if (ENV.NODE_ENV === "production") {
+if ((await ENV.NODE_ENV) === "production") {
 	transports.push(
 		new DailyRotateFile({
 			filename: "logs/error-%DATE%.log",

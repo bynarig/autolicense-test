@@ -48,37 +48,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 			if (user) {
 				token.id = user.id;
 				token.role = user.role;
-				token.avatarUrl = user.avatarUrl;
-				token.name = user.name;
-				token.username = user.username;
-				token.updatedAt = user.updatedAt;
-				token.lastLogin = user.lastLogin;
-				token.createdAt = user.createdAt;
-				token.subscriptionLVL = user.subscriptionLVL;
-			} else if (token?.id) {
-				// If no user but token exists, fetch the latest user data from the database
-				// This ensures the token always has the most up-to-date user information
-				const latestUser = await prisma.user.findUnique({
-					where: { id: token.id as string },
-					select: {
-						name: true,
-						username: true,
-						role: true,
-						avatarUrl: true,
-						createdAt: true,
-						updatedAt: true,
-					},
-				});
-
-				if (latestUser) {
-					// Update token with latest user data
-					token.name = latestUser.name;
-					token.username = latestUser.username;
-					token.role = latestUser.role;
-					token.avatarUrl = latestUser.avatarUrl;
-					token.createdAt = latestUser.createdAt;
-					token.updatedAt = latestUser.updatedAt;
-				}
 			}
 			return token;
 		},
@@ -87,22 +56,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 				session.user.id = token.id as string;
 			}
 			if (token?.role) session.user.role = token.role as string;
-			if (token?.avatarUrl) {
-				// Store the path in the session, the Navbar component will convert it to a full URL
-				session.user.avatarUrl = token.avatarUrl as string;
-			}
-			if (token?.name) {
-				session.user.name = token.name as string;
-			}
-			if (token?.username) {
-				session.user.username = token.username as string;
-			}
-			if (token?.createdAt) {
-				session.user.createdAt = token.createdAt as Date;
-			}
-			if (token?.updatedAt) {
-				session.user.updatedAt = token.updatedAt as Date;
-			}
 
 			return session;
 		},

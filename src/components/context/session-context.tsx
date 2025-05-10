@@ -71,7 +71,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
 				// Update avatar URL cache if available
 				if (updatedSession.user?.avatarUrl) {
-					import("@/split/client/services/image.service").then(
+					import("@client/services/image.service").then(
 						(imageUrlModule) => {
 							const fullAvatarUrl =
 								imageUrlModule.default.getImageUrl(
@@ -233,7 +233,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
 			// Update avatar URL cache if available
 			if (originalSession.user?.avatarUrl) {
-				import("@/split/client/services/image.service").then(
+				import("@client/services/image.service").then(
 					(imageUrlModule) => {
 						const fullAvatarUrl =
 							imageUrlModule.default.getImageUrl(

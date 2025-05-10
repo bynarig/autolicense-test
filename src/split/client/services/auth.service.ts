@@ -1,7 +1,9 @@
 "use client";
 
 import { toast } from "sonner";
-import { clearSessionCache } from "@/context/session-context";
+import { clearSessionCache } from "@/components/context/session-context";
+import axiosInstance from "@client/lib/axios";
+import { useUserStore } from "@client/store/userStore";
 
 export async function clientSignOut(callbackUrl: string = "/") {
 	const res = await fetch("/api/auth/logout", {
@@ -10,11 +12,10 @@ export async function clientSignOut(callbackUrl: string = "/") {
 		headers: { "Content-Type": "application/json" },
 	});
 	if (res.status === 200) {
+		useUserStore.getState().logout();
 		toast("Successfully signed out.");
 		// Clear all session data from localStorage
 		clearSessionCache();
-		// Redirect to the main page
-		window.location.href = callbackUrl;
 	} else {
 		toast("Failed to sign out.");
 	}
@@ -22,12 +23,12 @@ export async function clientSignOut(callbackUrl: string = "/") {
 }
 
 export async function clientSignIn(data: { email: string; password: string }) {
-	const res = await fetch("/api/auth/login", {
-		method: "POST",
-		body: JSON.stringify(data),
-		headers: { "Content-Type": "application/json" },
-	});
+	const res = await axiosInstance.post("auth/login", data);
 	if (res.status === 200) {
+		const { name, username, id, role, email, avatarUrl } = res.data.user;
+		useUserStore
+			.getState()
+			.login({ name, username, role, avatarUrl, id, email });
 		toast("Successfully logged in.");
 	} else {
 		toast("Failed to log in.");

@@ -1,11 +1,11 @@
 "use server";
 
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { auth } from "@server/config/auth-js";
 import { deleteImage } from "@/split/server/services/image.service";
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
 	try {
 		// Get the current user session
 		const session = await auth();

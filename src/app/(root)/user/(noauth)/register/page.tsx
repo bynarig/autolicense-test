@@ -19,7 +19,7 @@ import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { authSchema } from "@/validators/zod";
 import { clientRegister } from "@client/services/auth.service";
-import { useSessionWrapper } from "@/context/session-context";
+import { useSessionWrapper } from "@/components/context/session-context";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
