@@ -71,57 +71,13 @@ export default function Page() {
 	}) {
 		const res = await createQuestion(data);
 		if (res.status === 200) {
-			router.push(`/adminpanel/tests/questions/${res.data.data.id}`);
+			router.push(`/adminpanel/questions/${res.data.data.id}`);
 		} else {
 			toast(
 				`Failed to create question. err code: ${res.status} errmsg: ${res.data.error} data sended ${data.questionName}`,
 			);
 		}
 	}
-
-	// Calculate total pages
-	const totalPages = Math.max(1, Math.ceil(totalCount / itemsPerPage));
-
-	// Generate page numbers for pagination
-	const getPageNumbers = () => {
-		const pages = [];
-		const maxVisiblePages = 5;
-
-		if (totalPages <= maxVisiblePages) {
-			// Show all pages if there are few
-			for (let i = 1; i <= totalPages; i++) {
-				pages.push(i);
-			}
-		} else {
-			// Show a subset of pages with ellipsis
-			if (currentPage <= 3) {
-				// Near the start
-				for (let i = 1; i <= 4; i++) {
-					pages.push(i);
-				}
-				pages.push(-1); // Ellipsis
-				pages.push(totalPages);
-			} else if (currentPage >= totalPages - 2) {
-				// Near the end
-				pages.push(1);
-				pages.push(-1); // Ellipsis
-				for (let i = totalPages - 3; i <= totalPages; i++) {
-					pages.push(i);
-				}
-			} else {
-				// Middle
-				pages.push(1);
-				pages.push(-1); // Ellipsis
-				for (let i = currentPage - 1; i <= currentPage + 1; i++) {
-					pages.push(i);
-				}
-				pages.push(-1); // Ellipsis
-				pages.push(totalPages);
-			}
-		}
-
-		return pages;
-	};
 
 	return (
 		<div className="flex flex-col items-center w-full my-6 space-y-6">
@@ -228,11 +184,11 @@ export default function Page() {
 							</TableCell>
 						</TableRow>
 					) : (
-						questions.map((question, idx) => (
+						questions?.map((question, idx) => (
 							<TableRow key={question.id}>
 								<TableCell>
 									<Link
-										href={`/adminpanel/tests/questions/${question.id}`}
+										href={`/adminpanel/questions/${question.id}`}
 									>
 										<Button variant="ghost">
 											{idx + 1}

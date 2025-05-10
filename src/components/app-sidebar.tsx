@@ -56,7 +56,7 @@ const items = [
 	},
 	{
 		title: "Questions",
-		url: "/adminpanel/tests/questions",
+		url: "/adminpanel/questions",
 		icon: ShieldQuestionIcon,
 	},
 	// {

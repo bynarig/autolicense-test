@@ -64,28 +64,21 @@ export default function Page() {
 
 	async function onQuestionUpdate(data: Partial<QuestionType>) {
 		const id = params.id;
-		setIsUploading(true);
 
-		// let imageUrl = data.imageUrl;
-		//
-		// if (selectedImage) {
-		// 	imageUrl = await uploadImage(selectedImage);
-		// }
 		const res = await updateQuestion(data, id as string);
+
 		if (res.success) {
 			setQuestionData(res.data);
 		} else {
 			toast.error(`Failed to update question. Error: ${res.error}`);
 		}
-
-		setIsUploading(false);
 	}
 
 	async function onQuestionDelete() {
 		const id = params.id;
 		const res = await deleteQuestion(id as string);
 		if (res.success) {
-			router.push("/adminpanel/tests/questions");
+			router.push("/adminpanel/questions");
 		} else {
 			toast(
 				`Failed to delete question. err code: ${res.status} errmsg: ${res.error}`,
@@ -120,7 +113,7 @@ export default function Page() {
 	React.useEffect(() => {
 		if (questionData) {
 			form.reset({
-				name: questionData.title || "",
+				title: questionData.title || "",
 				text: questionData.text || "",
 				points: questionData.points || 1,
 			});

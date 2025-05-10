@@ -1,7 +1,6 @@
 "use client";
 
 import { toast } from "sonner";
-import { clearSessionCache } from "@/components/context/session-context";
 import axiosInstance from "@client/lib/axios";
 import { useUserStore } from "@client/store/userStore";
 
@@ -14,8 +13,6 @@ export async function clientSignOut(callbackUrl: string = "/") {
 	if (res.status === 200) {
 		useUserStore.getState().logout();
 		toast("Successfully signed out.");
-		// Clear all session data from localStorage
-		clearSessionCache();
 	} else {
 		toast("Failed to sign out.");
 	}

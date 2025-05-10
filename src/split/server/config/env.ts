@@ -10,8 +10,7 @@ const envSchema = z.object({
 			message: "Port must be between 1024 and 65535",
 		}),
 	NODE_ENV: z.enum(["development", "production", "test"]),
-	NEXTAUTH_SECRET: z.string().min(32),
-	BCRYPT_SALTS: z.number().min(2).max(10),
+	NEXTAUTH_SECRET: z.string(),
 	SMTP_HOST:
 		process.env.NODE_ENV === "development"
 			? z.string().optional()
@@ -24,14 +23,10 @@ const envSchema = z.object({
 		process.env.NODE_ENV === "development"
 			? z.string().optional()
 			: z.string(),
-	SMTP_PASSWORD:
+	SMTP_PASS:
 		process.env.NODE_ENV === "development"
 			? z.string().optional()
 			: z.string(),
-	SMTP_FROM:
-		process.env.NODE_ENV === "development"
-			? z.string().email().optional()
-			: z.string().email(),
 	APP_NAME:
 		process.env.NODE_ENV === "development"
 			? z.string().optional().default("Express Boilerplate")
@@ -46,12 +41,7 @@ export const ENV = envSchema.parse(process.env);
 
 // Add validation for production environment
 if (process.env.NODE_ENV === "production") {
-	const requiredFields = [
-		"SMTP_HOST",
-		"SMTP_PORT",
-		"SMTP_USER",
-		"SMTP_PASSWORD",
-	];
+	const requiredFields = ["SMTP_HOST", "SMTP_PORT", "SMTP_USER", "SMTP_PASS"];
 
 	requiredFields.forEach((field) => {
 		if (!process.env[field]) {

@@ -1,5 +1,3 @@
-"use server";
-
 import { ErrorCode } from "./errorCodes";
 
 export class AppError extends Error {

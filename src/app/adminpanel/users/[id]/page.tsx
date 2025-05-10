@@ -5,10 +5,36 @@ import { toast } from "sonner";
 import { redirect, useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
 import { z } from "zod";
-import ImageUploader from "@/components/ImageUploader";
-import UserForm, { UserFormData } from "@/components/UserForm";
 import UserInfoDisplay from "@/components/UserInfoDisplay";
 import DeleteConfirmationDialog from "@/components/DeleteConfirmationDialog";
+import {
+	Form,
+	FormControl,
+	FormField,
+	FormItem,
+	FormLabel,
+	FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { useForm } from "react-hook-form";
+import { userValidationSchema } from "@/validators/zod";
 
 // Define the validation schema for user data
 const userUpdateSchema = z.object({
@@ -20,25 +46,59 @@ const userUpdateSchema = z.object({
 	adminPassword: z.string().optional(),
 	subscriptionExpiresAt: z.date().optional(),
 	avatarUrl: z.string().optional(),
-	subscriptionLVL: z.string().optional(),
+	subscriptionLVL: z.number().optional(),
 	subscriptionType: z.string().optional(),
 	emailVerified: z.boolean().optional(),
 });
 
+type UserFormData = z.infer<typeof userValidationSchema>;
+
+const roles = [
+	{ value: "UNAPPROVED", label: "UNAPPROVED" },
+	{ value: "USER", label: "USER" },
+	{ value: "ADMIN", label: "ADMIN" },
+];
+
 export default function Page() {
 	const params = useParams();
-	const [userData, setUserData] = useState<any>(null);
-	const [selectedImageFile, setSelectedImageFile] = useState<File | null>(
-		null,
-	);
+	const [userData, setUserData] = useState<any>();
 	const [originalData, setOriginalData] = useState<UserFormData | null>(null);
 
-	// Handle image selection from ImageUploader component
-	const handleImageSelect = (file: File) => {
-		setSelectedImageFile(file);
-	};
+	const form = useForm<UserFormData>({
+		defaultValues: {
+			name: "",
+			username: "",
+			email: "",
+			role: "",
+			password: "",
+			subscriptionExpiresAt: undefined,
+			avatarUrl: "",
+			subscriptionLVL: 0,
+			subscriptionType: "",
+			emailVerified: false,
+		},
+	});
 
-	// Handle form submission
+	// Reset form when userData changes
+	React.useEffect(() => {
+		if (userData) {
+			form.reset({
+				name: userData.name || "",
+				username: userData.username || "",
+				email: userData.email || "",
+				role: userData.role || "",
+				password: "",
+				subscriptionExpiresAt: userData.subscriptionExpiresAt
+					? new Date(userData.subscriptionExpiresAt)
+					: undefined,
+				avatarUrl: userData.avatarUrl || "",
+				subscriptionLVL: userData.subscriptionLVL || 0,
+				subscriptionType: userData.subscriptionType || "",
+				emailVerified: userData.emailVerified || false,
+			});
+		}
+	}, [userData, form]);
+
 	async function handleFormSubmit(data: UserFormData) {
 		try {
 			// Validate the data with Zod
@@ -57,18 +117,6 @@ export default function Page() {
 					changedFields.email = data.email;
 				if (data.role !== originalData.role)
 					changedFields.role = data.role;
-
-				// Handle password change with admin password verification
-				if (data.password) {
-					if (!data.adminPassword) {
-						toast.error(
-							"Admin password is required to change user's password",
-						);
-						return;
-					}
-					changedFields.password = data.password;
-					changedFields.adminPassword = data.adminPassword;
-				}
 
 				// Compare dates properly
 				const originalDate = originalData.subscriptionExpiresAt
@@ -90,35 +138,6 @@ export default function Page() {
 					changedFields.emailVerified = data.emailVerified;
 			}
 
-			// If there's a selected image file, upload it first
-			if (selectedImageFile) {
-				try {
-					toast.info("Uploading image...");
-
-					const formData = new FormData();
-					formData.append("file", selectedImageFile);
-
-					const uploadResponse = await fetch("/api/storage/upload", {
-						method: "POST",
-						body: formData,
-					});
-
-					if (uploadResponse.ok) {
-						const { path, url } = await uploadResponse.json();
-						// Store only the path in the database, not the full URL
-						changedFields.avatarUrl = path;
-						toast.success("Image uploaded successfully");
-					} else {
-						toast.error(
-							`Failed to upload image, err: ${uploadResponse.status}`,
-						);
-					}
-				} catch (error) {
-					console.error("Error uploading image:", error);
-					toast.error("Error uploading image");
-				}
-			}
-
 			// Only proceed if there are changes to submit
 			if (Object.keys(changedFields).length === 0) {
 				toast.info("No changes detected");
@@ -126,8 +145,8 @@ export default function Page() {
 			}
 
 			const res = await fetch(`/api/admin/users/${params.id}`, {
-				method: "POST",
-				body: JSON.stringify(changedFields),
+				method: "PATCH",
+				body: JSON.stringify({ changedFields }),
 				headers: { "Content-Type": "application/json" },
 			});
 
@@ -139,16 +158,13 @@ export default function Page() {
 					username: updatedData.data.username,
 					email: updatedData.data.email,
 					role: updatedData.data.role,
-					subscriptionExpiresAt: updatedData.data
-						.subscriptionExpiresAt
-						? new Date(updatedData.data.subscriptionExpiresAt)
-						: undefined,
+					subscriptionExpiresAt:
+						updatedData.data.subscriptionExpiresAt,
 					avatarUrl: updatedData.data.avatarUrl,
 					subscriptionLVL: updatedData.data.subscriptionLVL,
 					subscriptionType: updatedData.data.subscriptionType,
 					emailVerified: updatedData.data.emailVerified,
 				});
-				toast.success(`User id:${params.id} edited.`);
 			} else {
 				const json = await res.json();
 				toast.error(
@@ -205,9 +221,7 @@ export default function Page() {
 				username: json.data.username,
 				email: json.data.email,
 				role: json.data.role,
-				subscriptionExpiresAt: json.data.subscriptionExpiresAt
-					? new Date(json.data.subscriptionExpiresAt)
-					: undefined,
+				subscriptionExpiresAt: json.data.subscriptionExpiresAt as Date,
 				avatarUrl: json.data.avatarUrl,
 				subscriptionLVL: json.data.subscriptionLVL,
 				subscriptionType: json.data.subscriptionType,
@@ -244,26 +258,266 @@ export default function Page() {
 							User ID: {userData?.id}
 						</h1>
 
-						{/* User Form Component */}
-						<UserForm
-							initialData={{
-								name: userData.name,
-								username: userData.username,
-								email: userData.email,
-								role: userData.role,
-								subscriptionExpiresAt:
-									userData.subscriptionExpiresAt
-										? new Date(
-												userData.subscriptionExpiresAt,
-											)
-										: undefined,
-								avatarUrl: userData.avatarUrl,
-								subscriptionLVL: userData.subscriptionLVL,
-								subscriptionType: userData.subscriptionType,
-								emailVerified: userData.emailVerified,
-							}}
-							onSubmit={handleFormSubmit}
-						/>
+						<Form {...form}>
+							<form
+								onSubmit={form.handleSubmit(handleFormSubmit)}
+								className="space-y-2"
+							>
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="name"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Name</FormLabel>
+												<FormControl>
+													<Input
+														type="text"
+														placeholder="Name"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="username"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Username</FormLabel>
+												<FormControl>
+													<Input
+														type="text"
+														placeholder="Username"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="email"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Email</FormLabel>
+												<FormControl>
+													<Input
+														type="text"
+														placeholder="Email"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="role"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Role</FormLabel>
+												<Select
+													onValueChange={
+														field.onChange
+													}
+													defaultValue={field.value}
+												>
+													<FormControl>
+														<SelectTrigger>
+															<SelectValue placeholder="Select a role" />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent>
+														{roles.map((role) => (
+															<SelectItem
+																key={role.value}
+																value={
+																	role.value
+																}
+															>
+																{role.label}
+															</SelectItem>
+														))}
+													</SelectContent>
+												</Select>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="password"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>Password</FormLabel>
+												<FormControl>
+													<Input
+														type="password"
+														placeholder="Set new password"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+								<FormField
+									control={form.control}
+									name="subscriptionExpiresAt"
+									render={({ field }) => (
+										<FormItem className="flex flex-col">
+											<FormLabel>
+												Subscription Expires At
+											</FormLabel>
+											<Popover>
+												<PopoverTrigger asChild>
+													<FormControl>
+														<Button
+															variant={"outline"}
+															className={cn(
+																"w-[240px] pl-3 text-left font-normal",
+																!field.value &&
+																	"text-muted-foreground",
+															)}
+														>
+															{field.value ? (
+																format(
+																	field.value,
+																	"PPP",
+																)
+															) : (
+																<span>
+																	Select date
+																</span>
+															)}
+															<CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+														</Button>
+													</FormControl>
+												</PopoverTrigger>
+												<PopoverContent
+													className="w-auto p-0"
+													align="start"
+												>
+													<Calendar
+														mode="single"
+														selected={field.value}
+														onSelect={
+															field.onChange
+														}
+														initialFocus
+													/>
+												</PopoverContent>
+											</Popover>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+
+								{/* Subscription Level */}
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="subscriptionLVL"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>
+													Subscription Level
+												</FormLabel>
+												<FormControl>
+													<Input
+														type="text"
+														placeholder="Subscription Level"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								{/* Subscription Type */}
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="subscriptionType"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>
+													Subscription Type
+												</FormLabel>
+												<FormControl>
+													<Input
+														type="text"
+														placeholder="Subscription Type"
+														{...field}
+													/>
+												</FormControl>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								{/* Email Verified */}
+								<div className="flex">
+									<FormField
+										control={form.control}
+										name="emailVerified"
+										render={({ field }) => (
+											<FormItem>
+												<FormLabel>
+													Email Verified
+												</FormLabel>
+												<Select
+													onValueChange={(value) =>
+														field.onChange(
+															value === "true",
+														)
+													}
+													defaultValue={
+														field.value
+															? "true"
+															: "false"
+													}
+												>
+													<FormControl>
+														<SelectTrigger>
+															<SelectValue placeholder="Email Verified Status" />
+														</SelectTrigger>
+													</FormControl>
+													<SelectContent>
+														<SelectItem value="true">
+															Yes
+														</SelectItem>
+														<SelectItem value="false">
+															No
+														</SelectItem>
+													</SelectContent>
+												</Select>
+												<FormMessage />
+											</FormItem>
+										)}
+									/>
+								</div>
+
+								<Button type="submit">Save User Data</Button>
+							</form>
+						</Form>
 
 						{/* Read-only User Information */}
 						<div className="mt-4">
@@ -282,18 +536,7 @@ export default function Page() {
 						</div>
 					</div>
 
-					<div className="flex flex-col place-content-right w-full mt-[20px]">
-						{/* Image Uploader Component */}
-						<ImageUploader
-							initialImage={
-								userData.avatarUrl ||
-								"https://i.imgur.com/fXfpiBZ.jpeg"
-							}
-							onImageSelect={handleImageSelect}
-							width={400}
-							height={400}
-						/>
-					</div>
+					<div className="flex flex-col place-content-right w-full mt-[20px]"></div>
 				</div>
 			)}
 		</>
